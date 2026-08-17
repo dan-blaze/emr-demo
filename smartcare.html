@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GenericCare — Psychiatric Note (Mock)</title>
+<style>
+  :root {
+    --nav-top:#2b4a73; --nav-bottom:#1b3252; --nav-text:#dbe6f3; --nav-muted:#9fb8d6;
+    --nav-icon:#a8c6ec; --nav-active:rgba(255,255,255,0.12); --nav-bar:#172b46;
+    --blue:#2f6fa8; --blue-dark:#255c8c; --blue-deep:#1f4d77; --accent:#3b8ed0;
+    --blue-pale:#eaf2fa; --blue-tint:#dce8f4;
+    --titlebar-a:#eef3f9; --titlebar-b:#dde7f2;
+    --section-bg:#d8e6f3; --section-text:#1f4d77;
+    --problem-btn:#2c3e5a;
+    --page-bg:#eef2f6; --panel:#ffffff;
+    --border:#c4d0db; --border-soft:#dde4ec;
+    --text:#33404d; --label:#52616e; --muted:#7e8a96; --link:#2f6fa8;
+    --sev-min:#3aa76d; --sev-mild:#7fb43a; --sev-mod:#e0a020; --sev-modsev:#e07d22; --sev-sev:#cf4032;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  * { box-sizing:border-box; }
+  html,body { height:100%; margin:0; }
+  body { background:var(--page-bg); color:var(--text); font-family:var(--font); font-size:13px; line-height:1.45; -webkit-font-smoothing:antialiased; }
+
+  .ic { width:16px; height:16px; display:inline-block; vertical-align:middle; flex:0 0 auto; }
+
+  .ehr { display:flex; flex-direction:column; height:100vh; min-height:0; }
+
+  /* ===== Top bar ===== */
+  .topbar { flex:0 0 auto; height:46px; background:#fff; border-bottom:1px solid var(--border);
+            display:flex; align-items:center; gap:14px; padding:0 12px; color:#2c4a6e; }
+  .tb-group { display:flex; align-items:center; gap:11px; }
+  .tb-icon { color:#3a5b80; cursor:pointer; display:flex; align-items:center; }
+  .tb-icon:hover { color:var(--blue); }
+  .logo { display:flex; align-items:center; gap:7px; font-size:17px; font-weight:600; color:#274a72; letter-spacing:.2px; }
+  .logo .mark { width:22px; height:22px; border-radius:5px; background:linear-gradient(135deg,#3b8ed0,#255c8c);
+                display:flex; align-items:center; justify-content:center; color:#fff; }
+  .logo .mark .ic { width:14px; height:14px; }
+  .tb-divider { width:1px; height:24px; background:var(--border-soft); }
+  .patient { display:flex; align-items:center; gap:6px; font-weight:600; color:#274a72; }
+  .patient a { color:#1f4d77; text-decoration:underline; cursor:pointer; }
+  .tb-alerts { display:flex; align-items:center; gap:9px; color:#c0392b; }
+  .tb-alerts .ic { width:15px; height:15px; }
+  .tb-alerts .a-blue { color:#2f6fa8; }
+  .tb-alerts .a-amber { color:#e0a020; }
+  .tb-spacer { flex:1 1 auto; }
+  .tb-badge { font-size:11px; font-weight:700; background:#cf4032; color:#fff; border-radius:9px; padding:1px 6px; }
+  .staff { display:flex; align-items:center; gap:5px; font-weight:600; color:#274a72; cursor:pointer; }
+
+  /* ===== Body split ===== */
+  .body { flex:1 1 auto; display:flex; min-height:0; }
+
+  /* ===== Sidebar ===== */
+  .sidebar { width:214px; flex:0 0 auto; background:linear-gradient(180deg,var(--nav-top),var(--nav-bottom));
+             color:var(--nav-text); display:flex; flex-direction:column; overflow-y:auto; }
+  .side-tabs { display:flex; background:var(--nav-bar); }
+  .side-tab { flex:1; display:flex; align-items:center; justify-content:center; height:38px; color:var(--nav-icon);
+              cursor:pointer; border-bottom:2px solid transparent; }
+  .side-tab.active { color:#fff; border-bottom-color:var(--accent); background:rgba(255,255,255,0.06); }
+  .side-tab:hover { color:#fff; }
+  .side-tab .ic { width:18px; height:18px; }
+  .nav { padding:8px 0; }
+  .nav-item { display:flex; align-items:center; gap:11px; padding:10px 16px; cursor:pointer; color:var(--nav-text);
+              font-size:13px; border-left:3px solid transparent; }
+  .nav-item .ic { width:17px; height:17px; color:var(--nav-icon); }
+  .nav-item:hover { background:var(--nav-active); }
+  .nav-item.active { background:rgba(255,255,255,0.10); border-left-color:var(--accent); font-weight:600; }
+  .nav-item.active .ic { color:#fff; }
+  .nav-sep { height:1px; background:rgba(255,255,255,0.10); margin:8px 14px; }
+
+  /* ===== Main ===== */
+  .main { flex:1 1 auto; display:flex; flex-direction:column; min-width:0; background:var(--page-bg); }
+
+  /* ===== Right summary rail ===== */
+  .rail { width:268px; flex:0 0 auto; background:#fff; border-left:1px solid var(--border); overflow-y:auto; }
+  .rail-title { background:linear-gradient(180deg,var(--titlebar-a),var(--titlebar-b)); border-bottom:1px solid var(--border);
+                padding:9px 14px; font-size:13px; font-weight:600; color:#274a72; display:flex; align-items:center; gap:8px; }
+  .rail-title .ic { color:#3a5b80; }
+  .rail-id { padding:12px 14px; border-bottom:1px solid var(--border-soft); }
+  .rail-name { font-size:15px; font-weight:600; color:#274a72; }
+  .rail-sub { font-size:12px; color:var(--muted); margin-top:2px; }
+  .rail-dx { margin-top:10px; }
+  .rail-dx .lbl { font-size:10.5px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-bottom:4px; }
+  .dx-chip { display:inline-block; background:var(--blue-pale); color:var(--blue-deep); border:1px solid var(--blue-tint);
+             border-radius:12px; padding:2px 11px; font-size:12px; font-weight:600; }
+  .rail-sec { padding:12px 14px; border-bottom:1px solid var(--border-soft); }
+  .rail-sec h3 { font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--section-text); margin:0 0 10px;
+                 display:flex; align-items:center; gap:8px; font-weight:700; }
+  .rail-sec h3 .bar { flex:1; height:1px; background:var(--border-soft); }
+  .vit-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .vit { background:#f6f9fc; border:1px solid var(--border-soft); border-radius:5px; padding:6px 9px; }
+  .vit .k { font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.4px; }
+  .vit .v { font-size:14px; font-weight:600; color:var(--text); line-height:1.3; }
+  .vit .u { font-size:10px; color:var(--muted); font-weight:400; }
+  .vit.amber .v { color:#c98a12; }
+  .labs { display:flex; flex-direction:column; gap:8px; }
+  .lab { display:flex; align-items:baseline; justify-content:space-between; font-size:12.5px; gap:10px; }
+  .lab .k { color:var(--label); }
+  .lab .v { font-weight:600; color:var(--text); white-space:nowrap; }
+  .lab.hi .v { color:#cf4032; }
+  .lab.hi .v::after { content:" \25B2"; font-size:8px; vertical-align:middle; }
+  @media (max-width:980px){ .rail { display:none; } }
+
+  .doc-title { flex:0 0 auto; height:38px; background:linear-gradient(180deg,var(--titlebar-a),var(--titlebar-b));
+               border-bottom:1px solid var(--border); display:flex; align-items:center; gap:10px; padding:0 14px; }
+  .doc-title h1 { font-size:15px; font-weight:600; color:#274a72; margin:0; }
+  .doc-title .dt-icons { margin-left:auto; display:flex; align-items:center; gap:12px; color:#3a5b80; }
+  .doc-title .dt-icons .ic { cursor:pointer; }
+  .doc-title .dt-icons .ic:hover { color:var(--blue); }
+
+  .doc-toolbar { flex:0 0 auto; background:#fff; border-bottom:1px solid var(--border); padding:8px 14px;
+                 display:flex; align-items:center; flex-wrap:wrap; gap:8px 16px; }
+  .fld { display:flex; align-items:center; gap:6px; }
+  .fld label { font-size:12px; color:var(--label); }
+  .control { font-family:var(--font); font-size:12.5px; color:var(--text); background:#fff;
+             border:1px solid var(--border); border-radius:3px; padding:4px 7px; }
+  .control:focus { outline:none; border-color:var(--blue); box-shadow:0 0 0 2px rgba(47,111,168,.15); }
+  .with-icon { display:flex; align-items:center; border:1px solid var(--border); border-radius:3px; background:#fff; }
+  .with-icon input { border:none; padding:4px 7px; font-size:12.5px; width:96px; }
+  .with-icon input:focus { outline:none; }
+  .with-icon .ic { width:15px; height:15px; color:var(--muted); margin-right:6px; }
+  .date-plain { font-size:12.5px; color:var(--label); }
+  .tb-spacer2 { flex:1 1 auto; }
+  .circle-btn { width:26px; height:26px; border-radius:50%; border:1px solid var(--border); background:#fff;
+                color:var(--blue); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; }
+  .circle-btn:hover { background:var(--blue-pale); }
+  .btn-sign { background:var(--blue); color:#fff; border:1px solid var(--blue-dark); border-radius:3px;
+              font-size:13px; font-weight:600; padding:5px 20px; cursor:pointer; }
+  .btn-sign:hover { background:var(--blue-dark); }
+  .tool-ic { color:#3a5b80; cursor:pointer; display:flex; }
+  .tool-ic:hover { color:var(--blue); }
+
+  /* ===== Tabs ===== */
+  .tabs1 { flex:0 0 auto; display:flex; gap:0; background:#f4f7fa; border-bottom:1px solid var(--border); padding:0 8px; overflow-x:auto; }
+  .tab1 { font-size:13px; color:var(--label); padding:9px 16px; cursor:pointer; border-bottom:3px solid transparent; white-space:nowrap; }
+  .tab1:hover { color:var(--blue); }
+  .tab1.active { color:var(--blue-deep); font-weight:600; border-bottom-color:var(--blue); background:#fff; }
+
+  .tabs2 { flex:0 0 auto; display:flex; gap:0; background:#fff; border-bottom:1px solid var(--border); padding:0 12px; overflow-x:auto; }
+  .tab2 { font-size:12.5px; color:var(--muted); padding:8px 14px; cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap; }
+  .tab2:hover { color:var(--blue); }
+  .tab2.active { color:var(--blue-deep); font-weight:600; border-bottom-color:var(--accent); }
+
+  /* ===== Content ===== */
+  .content { flex:1 1 auto; overflow-y:auto; padding:16px 18px 0; }
+  .sheet { background:#fff; border:1px solid var(--border-soft); border-radius:6px; box-shadow:0 1px 3px rgba(40,70,90,.10);
+           padding:16px 18px 20px; max-width:1000px; }
+
+  .hidden { display:none !important; }
+
+  /* Problem block */
+  .problem-head { display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; color:#2c3e5a;
+                  padding-bottom:10px; border-bottom:1px solid var(--border-soft); margin-bottom:14px; }
+  .problem-head .x { color:#8a97a4; cursor:pointer; display:flex; }
+  .problem-head .x:hover { color:#cf4032; }
+  .prob-row { display:flex; gap:14px; align-items:flex-start; margin-bottom:14px; flex-wrap:wrap; }
+  .btn-problem { background:var(--problem-btn); color:#fff; border:none; border-radius:3px; font-size:12.5px;
+                 padding:9px 14px; cursor:pointer; white-space:nowrap; align-self:flex-start; }
+  .btn-problem:hover { background:#22304a; }
+  .prob-val { flex:1 1 300px; border:1px solid var(--border); border-radius:3px; padding:9px 11px; min-height:64px;
+              color:var(--text); background:#fcfdfe; }
+  .prob-val.empty { color:var(--muted); font-style:italic; }
+  .form-row { margin-bottom:14px; }
+  .form-row > label { display:block; font-size:12px; color:var(--label); margin-bottom:5px; }
+  select.control, input.control { min-width:240px; }
+  textarea.control { width:100%; font-family:var(--font); resize:vertical; min-height:70px; line-height:1.5; }
+  textarea.soap-field { min-height:150px; }
+  .add-link { display:block; text-align:right; color:var(--link); font-size:12.5px; text-decoration:underline; cursor:pointer; margin-top:-4px; }
+  .add-link:hover { color:var(--blue-dark); }
+
+  .section-bar { background:var(--section-bg); color:var(--section-text); font-size:13px; font-weight:600;
+                 padding:8px 12px; border-radius:3px; margin:20px 0 12px; }
+  .checks { display:flex; flex-direction:column; gap:9px; }
+  .check { display:flex; align-items:flex-start; gap:9px; font-size:12.5px; color:var(--text); cursor:pointer; }
+  .check input { margin-top:2px; }
+
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; }
+  @media (max-width:760px){ .grid2 { grid-template-columns:1fr; } }
+  .grid2 .full { grid-column:1 / -1; }
+
+  /* ===== PHQ-9 ===== */
+  .phq-intro { margin-bottom:6px; }
+  .phq-intro h2 { font-size:16px; color:#274a72; margin:0 0 4px; font-weight:600; }
+  .phq-intro p { margin:0; color:var(--label); font-size:12.5px; }
+  .phq-legend { font-size:11.5px; color:var(--muted); margin:8px 0 14px; }
+  .phq-legend b { color:var(--label); }
+  .phq-item { display:flex; align-items:center; gap:14px; padding:11px 0; border-bottom:1px solid var(--border-soft); flex-wrap:wrap; }
+  .phq-q { flex:1 1 320px; min-width:240px; display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--text); }
+  .phq-n { flex:0 0 auto; width:22px; height:22px; border-radius:50%; background:var(--blue-tint); color:var(--blue-deep);
+           font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+  .phq-opts { display:flex; gap:6px; flex:0 0 auto; flex-wrap:wrap; }
+  .phq-opt { border:1px solid var(--border); background:#fff; color:var(--label); border-radius:5px;
+             padding:7px 9px; font-size:11.5px; font-family:var(--font); cursor:pointer; min-width:92px; text-align:center;
+             transition:background .1s, border-color .1s, color .1s; }
+  .phq-opt:hover { border-color:var(--blue); background:var(--blue-pale); color:var(--blue-deep); }
+  .phq-opt.selected { background:var(--blue); color:#fff; border-color:var(--blue-dark); font-weight:600; }
+  .phq-opt .sc { display:block; font-size:9.5px; opacity:.6; margin-top:1px; }
+  .phq-opt.selected .sc { opacity:.85; }
+
+  .phq-summary { position:sticky; bottom:0; margin-top:16px; background:#fff; border:1px solid var(--border);
+                 border-radius:6px; box-shadow:0 -2px 8px rgba(40,70,90,.08); padding:13px 16px;
+                 display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+  .phq-total { font-size:13px; color:var(--label); }
+  .phq-total b { font-size:22px; color:#274a72; margin:0 3px; }
+  .phq-sev { font-size:12.5px; padding:4px 12px; border-radius:14px; font-weight:600; color:#fff; background:var(--muted); }
+  .phq-sev.sev-min{background:var(--sev-min);} .phq-sev.sev-mild{background:var(--sev-mild);}
+  .phq-sev.sev-mod{background:var(--sev-mod);} .phq-sev.sev-modsev{background:var(--sev-modsev);} .phq-sev.sev-sev{background:var(--sev-sev);}
+  .phq-answered { font-size:12px; color:var(--muted); }
+  .phq-reset { margin-left:auto; font-size:12px; color:var(--link); text-decoration:underline; cursor:pointer; background:none; border:none; }
+  .phq-alert { display:none; align-items:center; gap:8px; width:100%; margin-top:2px; padding:9px 12px; border-radius:5px;
+               background:#fdecea; border:1px solid #f2bcb6; color:#a5281b; font-size:12px; }
+  .phq-alert .ic { color:#cf4032; }
+
+  .placeholder { background:#fff; border:1px dashed var(--border); border-radius:6px; padding:46px 24px;
+                 text-align:center; color:var(--muted); max-width:1000px; }
+  .placeholder .pt { font-size:15px; color:var(--label); margin-bottom:5px; }
+
+  .disclaimer { color:var(--muted); font-size:11px; text-align:center; padding:16px 10px 22px; max-width:1000px; }
+
+  /* Toast */
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(18px);
+           background:#26384a; color:#fff; padding:10px 17px; border-radius:6px; font-size:12.5px;
+           box-shadow:0 8px 30px rgba(0,0,0,.25); opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; z-index:60; }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- ===== Icon sprite ===== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.8 6 20.5l1.2-6.5L2.5 9.4 9 8.5z" fill="currentColor"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z" fill="currentColor"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M12 3a5 5 0 00-5 5v3l-1.6 3h13.2L17 11V8a5 5 0 00-5-5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 18a2 2 0 004 0" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l8.5 15h-17z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9.5v4.5M12 16.6v.4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9.4 9.3a2.7 2.7 0 015.2 1c0 1.7-2.5 2-2.5 3.6M12 17.4v.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></symbol>
+  <symbol id="i-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z" fill="currentColor"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5M12 7.6v.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-history" viewBox="0 0 24 24"><path d="M5 12a7 7 0 117 7 7 7 0 01-5-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M5 16v-4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 8.5V12l2.6 1.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-power" viewBox="0 0 24 24"><path d="M12 4v8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M7.5 7a7 7 0 109 0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/><path d="M6 10v9h12v-9" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></symbol>
+  <symbol id="i-idcard" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="11" r="2" fill="currentColor"/><path d="M13 9.5h5M13 13h5M5.6 15.4c.5-1.2 1.5-1.9 2.9-1.9s2.4.7 2.9 1.9" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round"/></symbol>
+  <symbol id="i-pill" viewBox="0 0 24 24"><rect x="3" y="9" width="18" height="6" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 9.3v5.4" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-clipboard" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="9" y="2.6" width="6" height="3.4" rx="1" fill="currentColor"/><path d="M8 11h8M8 14.5h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-table" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 9.2h18M3 14.4h18M9.2 9.2V20" stroke="currentColor" stroke-width="1.4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M9 15l6-6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/><path d="M11.5 7l1-1a3.5 3.5 0 015 5l-1 1M12.5 17l-1 1a3.5 3.5 0 01-5-5l1-1" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="1" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12M4 6v.02M4 12v.02M4 18v.02" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="i-save" viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8 4v5h7V4M8 20v-6h8v6" fill="none" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="i-print" viewBox="0 0 24 24"><path d="M7 8V4h10v4" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="8" width="16" height="8" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 14h10v6H7z" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.2h17M8 3.5v3M16 3.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.3" fill="currentColor"/><circle cx="17" cy="6" r="2.3" fill="currentColor"/><circle cx="17" cy="18" r="2.3" fill="currentColor"/><path d="M8 11l7-4M8 13l7 4" stroke="currentColor" stroke-width="1.5"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="i-prev" viewBox="0 0 24 24"><path d="M14 7l-5 5 5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-next" viewBox="0 0 24 24"><path d="M10 7l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M6 21V4h11l-2 4 2 4H6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" fill="currentColor"/></symbol>
+</svg>
+
+<div class="ehr">
+
+  <!-- ===== Top bar ===== -->
+  <header class="topbar">
+    <div class="tb-group">
+      <span class="tb-icon" title="Menu"><svg class="ic"><use href="#i-menu"/></svg></span>
+      <span class="logo"><span class="mark"><svg class="ic"><use href="#i-cross"/></svg></span>GenericCare</span>
+    </div>
+    <div class="tb-divider"></div>
+    <div class="tb-group">
+      <span class="tb-icon" title="Search"><svg class="ic"><use href="#i-search"/></svg></span>
+      <span class="tb-icon" title="Favorites"><svg class="ic"><use href="#i-star"/></svg></span>
+      <span class="tb-icon"><svg class="ic"><use href="#i-user"/></svg></span>
+      <span class="patient"><a onclick="toast('Client search (demo)')">Williams, Katie (2104730)</a></span>
+    </div>
+    <div class="tb-alerts">
+      <span class="tb-icon" title="Alerts"><svg class="ic"><use href="#i-bell"/></svg></span>
+      <span class="tb-icon a-amber" title="Warnings"><svg class="ic"><use href="#i-warn"/></svg></span>
+      <span class="tb-icon a-blue"><svg class="ic"><use href="#i-user"/></svg></span>
+      <span class="tb-icon a-blue"><svg class="ic"><use href="#i-help"/></svg></span>
+      <span class="tb-icon a-blue"><svg class="ic"><use href="#i-grid"/></svg></span>
+      <span class="tb-icon" title="Flag"><svg class="ic"><use href="#i-flag"/></svg></span>
+      <span class="tb-icon a-blue"><svg class="ic"><use href="#i-info"/></svg></span>
+      <span class="tb-icon a-blue"><svg class="ic"><use href="#i-plus"/></svg></span>
+      <span class="tb-icon"><svg class="ic"><use href="#i-close"/></svg></span>
+    </div>
+    <div class="tb-spacer"></div>
+    <div class="tb-group">
+      <span class="tb-icon" title="Messages"><svg class="ic"><use href="#i-share"/></svg></span>
+      <span class="tb-icon" title="Recent"><svg class="ic"><use href="#i-history"/></svg></span>
+      <span class="tb-icon" title="Help"><svg class="ic"><use href="#i-help"/></svg></span>
+      <span class="staff" onclick="toast('Staff menu (demo)')">Medical Staff <svg class="ic" style="width:13px;height:13px"><use href="#i-chev"/></svg></span>
+      <span class="tb-icon" title="Sign out"><svg class="ic"><use href="#i-power"/></svg></span>
+    </div>
+  </header>
+
+  <div class="body">
+
+    <!-- ===== Sidebar ===== -->
+    <nav class="sidebar">
+      <div class="side-tabs">
+        <div class="side-tab active" title="Client"><svg class="ic"><use href="#i-user"/></svg></div>
+        <div class="side-tab" title="Provider"><svg class="ic"><use href="#i-building"/></svg></div>
+        <div class="side-tab" title="List"><svg class="ic"><use href="#i-list"/></svg></div>
+      </div>
+      <div class="nav">
+        <div class="nav-item" onclick="toast('Client Dashboard (demo)')"><svg class="ic"><use href="#i-home"/></svg> Client Dashboard</div>
+        <div class="nav-item active"><svg class="ic"><use href="#i-idcard"/></svg> Client Information</div>
+        <div class="nav-item" onclick="toast('Medication Management (demo)')"><svg class="ic"><use href="#i-pill"/></svg> Medication Management / Rx</div>
+        <div class="nav-item" onclick="toast('Client Orders (demo)')"><svg class="ic"><use href="#i-clipboard"/></svg> Client Orders</div>
+        <div class="nav-item" onclick="toast('Client MAR (demo)')"><svg class="ic"><use href="#i-table"/></svg> Client MAR</div>
+        <div class="nav-sep"></div>
+        <div class="nav-item" onclick="toast('SmartLinks (demo)')"><svg class="ic"><use href="#i-link"/></svg> SmartLinks</div>
+      </div>
+    </nav>
+
+    <!-- ===== Main ===== -->
+    <main class="main">
+
+      <div class="doc-title">
+        <h1>Psychiatric Note</h1>
+        <div class="dt-icons">
+          <svg class="ic" title="Save"><use href="#i-save"/></svg>
+          <svg class="ic" title="Print"><use href="#i-print"/></svg>
+          <svg class="ic" title="History"><use href="#i-history"/></svg>
+          <svg class="ic" title="Flag"><use href="#i-flag"/></svg>
+          <svg class="ic" title="Info"><use href="#i-info"/></svg>
+          <svg class="ic" title="Close"><use href="#i-close"/></svg>
+        </div>
+      </div>
+
+      <div class="doc-toolbar">
+        <div class="fld">
+          <label>Effective</label>
+          <span class="with-icon"><input value="03/29/2022" /><svg class="ic"><use href="#i-calendar"/></svg></span>
+        </div>
+        <div class="fld">
+          <label>Status</label>
+          <input class="control" value="In Progress" style="width:110px" />
+        </div>
+        <div class="fld">
+          <label>Author</label>
+          <select class="control" style="min-width:130px">
+            <option>Staff, Medical</option>
+            <option>Reyes, A. MD</option>
+            <option>Chen, L. PMHNP</option>
+          </select>
+          <span class="date-plain">03/17/2022</span>
+        </div>
+        <div class="tb-spacer2"></div>
+        <span class="circle-btn" title="Previous"><svg class="ic" style="width:15px;height:15px"><use href="#i-prev"/></svg></span>
+        <span class="circle-btn" title="Next"><svg class="ic" style="width:15px;height:15px"><use href="#i-next"/></svg></span>
+        <button class="btn-sign" onclick="toast('Note signed (demo)')">Sign</button>
+        <span class="tool-ic" title="Share"><svg class="ic"><use href="#i-share"/></svg></span>
+        <span class="tool-ic" title="Expand"><svg class="ic"><use href="#i-expand"/></svg></span>
+        <span class="tool-ic"><svg class="ic"><use href="#i-plus"/></svg></span>
+      </div>
+
+      <!-- Main tabs -->
+      <div class="tabs1" id="tabs1">
+        <div class="tab1 active" id="tab-soap" data-main="soap">SOAP</div>
+        <div class="tab1" id="tab-service" data-main="service">Service</div>
+        <div class="tab1" id="tab-note" data-main="note">Note</div>
+        <div class="tab1" id="tab-phq9" data-main="phq9">PHQ-9</div>
+        <div class="tab1" id="tab-billing" data-main="billing">Billing Diagnosis</div>
+        <div class="tab1" id="tab-addon" data-main="addon">Add-On Codes</div>
+        <div class="tab1" id="tab-warnings" data-main="warnings">Warnings</div>
+      </div>
+
+      <!-- Sub tabs (Note only) -->
+      <div class="tabs2" id="tabs2">
+        <div class="tab2" id="subtab-general" data-sub="general">General</div>
+        <div class="tab2" id="subtab-exam" data-sub="exam">Exam</div>
+        <div class="tab2 active" id="subtab-mdm" data-sub="mdm">Medical Decision Making</div>
+        <div class="tab2" id="subtab-aims" data-sub="aims">AIMS</div>
+        <div class="tab2" id="subtab-diagnosis" data-sub="diagnosis">Diagnosis</div>
+        <div class="tab2" id="subtab-psychotherapy" data-sub="psychotherapy">Psychotherapy</div>
+      </div>
+
+      <div class="content">
+
+        <!-- ===================== SOAP MAIN PANEL (default) ===================== -->
+        <div class="main-panel" data-main="soap">
+          <div class="sheet">
+            <div class="section-bar">S — Subjective</div>
+            <div class="form-row">
+              <label for="soap-hpi">HPI — History of Present Illness</label>
+              <textarea class="control soap-field" id="soap-hpi" rows="6" placeholder="History of present illness…"></textarea>
+            </div>
+            <div class="form-row">
+              <label for="soap-ros">ROS — Review of Systems</label>
+              <textarea class="control soap-field" id="soap-ros" rows="6" placeholder="Review of systems…"></textarea>
+            </div>
+
+            <div class="section-bar">O — Objective</div>
+            <div class="form-row">
+              <label for="soap-pe">PE — Physical Exam</label>
+              <textarea class="control soap-field" id="soap-pe" rows="6" placeholder="Physical exam findings…"></textarea>
+            </div>
+
+            <div class="section-bar">A / P — Assessment &amp; Plan</div>
+            <div class="form-row">
+              <label for="soap-ap">Assessment and Plan</label>
+              <textarea class="control soap-field" id="soap-ap" rows="7" placeholder="Assessment and plan…"></textarea>
+            </div>
+
+            <div class="section-bar">Goals</div>
+            <div class="form-row">
+              <label for="soap-goals">Goals</label>
+              <textarea class="control soap-field" id="soap-goals" rows="6" placeholder="Treatment goals…"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================== NOTE MAIN PANEL ===================== -->
+        <div class="main-panel hidden" data-main="note">
+
+          <!-- ----- General sub-panel: note text fields ----- -->
+          <div class="note-sub sheet hidden" data-sub="general">
+            <div class="form-row">
+              <label for="cc">Chief Complaint</label>
+              <input class="control" id="cc" style="width:100%" value="Follow-up for depression." />
+            </div>
+            <div class="form-row">
+              <label for="hpi">History of Present Illness</label>
+              <textarea class="control" id="hpi" rows="5">Ms. Williams is a 34-year-old female presenting for follow-up of major depressive disorder. She reports persistent low mood, anhedonia, and poor sleep over the past two weeks, with modest improvement in energy since starting sertraline. She denies current suicidal ideation, intent, or plan. No manic or psychotic symptoms reported.</textarea>
+            </div>
+            <div class="grid2">
+              <div class="form-row">
+                <label for="meds">Current Medications</label>
+                <textarea class="control" id="meds" rows="3">Sertraline 50 mg PO daily.</textarea>
+              </div>
+              <div class="form-row">
+                <label for="mse">Mental Status Exam</label>
+                <textarea class="control" id="mse" rows="3">Alert and oriented ×3. Cooperative, fair grooming. Mood "down," affect constricted but congruent. Thought process linear. No SI/HI. Insight and judgment fair.</textarea>
+              </div>
+              <div class="form-row">
+                <label for="assess">Assessment</label>
+                <textarea class="control" id="assess" rows="3">Major depressive disorder, single episode, moderate — partial response to current regimen.</textarea>
+              </div>
+              <div class="form-row">
+                <label for="plan">Plan</label>
+                <textarea class="control" id="plan" rows="3">Continue sertraline 50 mg daily; reassess in 4 weeks. Continue weekly psychotherapy. Safety plan reviewed.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- ----- Medical Decision Making sub-panel (matches screenshot) ----- -->
+          <div class="note-sub sheet" data-sub="mdm">
+            <div class="problem-head">
+              <span class="x" title="Remove problem" onclick="toast('Remove problem (demo)')"><svg class="ic"><use href="#i-close"/></svg></span>
+              Problem 1
+            </div>
+
+            <div class="prob-row">
+              <button class="btn-problem" onclick="toast('Problem picker (demo)')">Problem...</button>
+              <div class="prob-val empty">Select a problem…</div>
+            </div>
+
+            <div class="form-row">
+              <label for="complexity">Complexity of Problem</label>
+              <select class="control" id="complexity" style="width:360px; max-width:100%">
+                <option>Self-limited or minor problem</option>
+                <option selected>Stable chronic illness</option>
+                <option>Acute, uncomplicated illness or injury</option>
+                <option>Chronic illness with exacerbation or progression</option>
+                <option>Acute illness with systemic symptoms</option>
+                <option>Acute or chronic illness that poses a threat to life or bodily function</option>
+              </select>
+            </div>
+
+            <div class="form-row">
+              <label for="assoc">Associated signs/systems; other information</label>
+              <textarea class="control" id="assoc" rows="4" placeholder="Enter associated signs/symptoms or other relevant information…"></textarea>
+            </div>
+
+            <a class="add-link" onclick="toast('Add Problem (demo)')">Add Problem</a>
+
+            <div class="section-bar">Data Reviewed</div>
+            <div class="checks">
+              <label class="check"><input type="checkbox" /> Review labs/other tests</label>
+              <label class="check"><input type="checkbox" /> Order labs/other tests</label>
+              <label class="check"><input type="checkbox" /> Review/summarized old records</label>
+              <label class="check"><input type="checkbox" /> Obtain history from someone other than the patient</label>
+              <label class="check"><input type="checkbox" /> Independent interpretation of a test performed by another physician/other qualified health care professional (not separately reported)</label>
+              <label class="check"><input type="checkbox" /> Discussion of management or test interpretation with external physician/other qualified health care professional (not separately reported)</label>
+            </div>
+          </div>
+
+          <!-- ----- Generic sub-panel for other Note sub-tabs ----- -->
+          <div class="note-sub placeholder hidden" data-sub="generic">
+            <div class="pt" id="subTitle">Section</div>
+            <div>This section is part of the note layout but is not built out in this mock.</div>
+          </div>
+        </div>
+
+        <!-- ===================== PHQ-9 MAIN PANEL ===================== -->
+        <div class="main-panel hidden" data-main="phq9">
+          <div class="sheet">
+            <div class="phq-intro">
+              <h2>PHQ-9 — Patient Health Questionnaire</h2>
+              <p>Over the last 2 weeks, how often have you been bothered by any of the following problems?</p>
+            </div>
+            <div class="phq-legend"><b>Scoring:</b> Not at all = 0 &nbsp;·&nbsp; Several days = 1 &nbsp;·&nbsp; More than half the days = 2 &nbsp;·&nbsp; Nearly every day = 3</div>
+
+            <div id="phqItems">
+              <!-- Q1 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">1</span><span>Little interest or pleasure in doing things</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 1">
+                  <button type="button" class="phq-opt" id="phq9-q1-0" data-q="1" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q1-1" data-q="1" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q1-2" data-q="1" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q1-3" data-q="1" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+              <!-- Q2 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">2</span><span>Feeling down, depressed, or hopeless</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 2">
+                  <button type="button" class="phq-opt" id="phq9-q2-0" data-q="2" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q2-1" data-q="2" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q2-2" data-q="2" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q2-3" data-q="2" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+              <!-- Q3 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">3</span><span>Trouble falling or staying asleep, or sleeping too much</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 3">
+                  <button type="button" class="phq-opt" id="phq9-q3-0" data-q="3" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q3-1" data-q="3" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q3-2" data-q="3" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q3-3" data-q="3" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+              <!-- Q4 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">4</span><span>Feeling tired or having little energy</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 4">
+                  <button type="button" class="phq-opt" id="phq9-q4-0" data-q="4" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q4-1" data-q="4" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q4-2" data-q="4" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q4-3" data-q="4" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+              <!-- Q5 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">5</span><span>Poor appetite or overeating</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 5">
+                  <button type="button" class="phq-opt" id="phq9-q5-0" data-q="5" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q5-1" data-q="5" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q5-2" data-q="5" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q5-3" data-q="5" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+              <!-- Q6 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">6</span><span>Feeling bad about yourself — or that you are a failure or have let yourself or your family down</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 6">
+                  <button type="button" class="phq-opt" id="phq9-q6-0" data-q="6" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q6-1" data-q="6" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q6-2" data-q="6" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q6-3" data-q="6" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+              <!-- Q7 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">7</span><span>Trouble concentrating on things, such as reading the newspaper or watching television</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 7">
+                  <button type="button" class="phq-opt" id="phq9-q7-0" data-q="7" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q7-1" data-q="7" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q7-2" data-q="7" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q7-3" data-q="7" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+              <!-- Q8 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">8</span><span>Moving or speaking so slowly that other people could have noticed — or the opposite, being so fidgety or restless that you have been moving around a lot more than usual</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 8">
+                  <button type="button" class="phq-opt" id="phq9-q8-0" data-q="8" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q8-1" data-q="8" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q8-2" data-q="8" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q8-3" data-q="8" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+              <!-- Q9 -->
+              <div class="phq-item">
+                <div class="phq-q"><span class="phq-n">9</span><span>Thoughts that you would be better off dead, or of hurting yourself in some way</span></div>
+                <div class="phq-opts" role="radiogroup" aria-label="Question 9">
+                  <button type="button" class="phq-opt" id="phq9-q9-0" data-q="9" data-score="0">Not at all<span class="sc">0</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q9-1" data-q="9" data-score="1">Several days<span class="sc">1</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q9-2" data-q="9" data-score="2">More than half the days<span class="sc">2</span></button>
+                  <button type="button" class="phq-opt" id="phq9-q9-3" data-q="9" data-score="3">Nearly every day<span class="sc">3</span></button>
+                </div>
+              </div>
+            </div>
+
+            <div class="phq-summary">
+              <span class="phq-total">Total score <b id="phqTotal">0</b> / 27</span>
+              <span class="phq-sev sev-min" id="phqSev">Minimal or none</span>
+              <span class="phq-answered" id="phqAnswered">0 of 9 answered</span>
+              <button class="phq-reset" id="phqReset">Reset</button>
+              <div class="phq-alert" id="phqAlert">
+                <svg class="ic"><use href="#i-warn"/></svg>
+                <span>Positive response to item 9 (thoughts of self-harm). Complete a safety assessment per protocol.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===================== GENERIC MAIN PANEL ===================== -->
+        <div class="main-panel placeholder hidden" data-main="generic">
+          <div class="pt" id="mainTitle">Tab</div>
+          <div>This tab is part of the document layout but is not built out in this mock.</div>
+        </div>
+
+        <div class="disclaimer">
+          Mock interface for demonstration only — synthetic data, not affiliated with Streamline Healthcare, not a real
+          EHR or patient, and not for clinical use. PHQ-9 item wording © Pfizer Inc. (public-domain instrument), shown here illustratively.
+        </div>
+
+      </div><!-- /content -->
+    </main>
+
+    <!-- ===== Right summary rail ===== -->
+    <aside class="rail" id="rail">
+      <div class="rail-title"><svg class="ic"><use href="#i-idcard"/></svg> Patient Summary</div>
+
+      <div class="rail-id">
+        <div class="rail-name">Williams, Katie</div>
+        <div class="rail-sub">MRN 2104730 &middot; <span id="rail-age">42</span> y/o</div>
+        <div class="rail-dx">
+          <div class="lbl">Recent Diagnosis</div>
+          <span class="dx-chip" id="rail-dx">Hx of T2DM</span>
+          <div class="rail-sub" style="margin-top:5px">Type 2 Diabetes Mellitus &middot; poorly controlled</div>
+        </div>
+      </div>
+
+      <div class="rail-sec">
+        <h3>Vitals <span class="bar"></span></h3>
+        <div class="vit-grid">
+          <div class="vit"><div class="k">BP</div><div class="v" id="rail-bp">130/80</div></div>
+          <div class="vit"><div class="k">HR</div><div class="v" id="rail-hr">72 <span class="u">bpm</span></div></div>
+          <div class="vit"><div class="k">RR</div><div class="v" id="rail-rr">16 <span class="u">/min</span></div></div>
+          <div class="vit"><div class="k">Temp</div><div class="v" id="rail-temp">98.6 <span class="u">&deg;F</span></div></div>
+          <div class="vit"><div class="k">Weight</div><div class="v" id="rail-wt">185 <span class="u">lbs</span></div></div>
+          <div class="vit amber"><div class="k">BMI</div><div class="v" id="rail-bmi">31.2</div></div>
+        </div>
+      </div>
+
+      <div class="rail-sec">
+        <h3>Labs &mdash; Recent <span class="bar"></span></h3>
+        <div class="labs">
+          <div class="lab hi"><span class="k">HbA1c</span><span class="v" id="rail-hba1c">8.2 %</span></div>
+          <div class="lab hi"><span class="k">Fasting Glucose</span><span class="v" id="rail-fbs">189 mg/dL</span></div>
+          <div class="lab"><span class="k">BUN</span><span class="v" id="rail-bun">15</span></div>
+          <div class="lab"><span class="k">Creatinine</span><span class="v" id="rail-cr">1.0</span></div>
+          <div class="lab"><span class="k">LDL</span><span class="v" id="rail-ldl">100</span></div>
+        </div>
+      </div>
+    </aside>
+  </div><!-- /body -->
+</div><!-- /ehr -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ---------- Toast ---------- */
+  let toastTimer = null;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 2000);
+  }
+
+  /* ---------- Tab switching ---------- */
+  const SUB_TITLES = { exam:'Exam', aims:'AIMS (Abnormal Involuntary Movement Scale)', diagnosis:'Diagnosis', psychotherapy:'Psychotherapy' };
+  const REAL_SUBS = ['general','mdm'];
+
+  function showMain(name){
+    document.querySelectorAll('.tab1').forEach(t=>t.classList.toggle('active', t.dataset.main===name));
+    document.getElementById('tabs2').style.display = (name==='note') ? '' : 'none';
+    document.querySelectorAll('.main-panel').forEach(p=>p.classList.add('hidden'));
+    if (name==='note'){
+      document.querySelector('.main-panel[data-main="note"]').classList.remove('hidden');
+      const active = document.querySelector('.tab2.active');
+      showSub(active ? active.dataset.sub : 'mdm');
+    } else if (name==='phq9' || name==='soap'){
+      document.querySelector('.main-panel[data-main="'+name+'"]').classList.remove('hidden');
+    } else {
+      const g = document.querySelector('.main-panel[data-main="generic"]');
+      document.getElementById('mainTitle').textContent =
+        ({service:'Service',billing:'Billing Diagnosis',addon:'Add-On Codes',warnings:'Warnings'})[name] || 'Tab';
+      g.classList.remove('hidden');
+    }
+  }
+
+  function showSub(name){
+    document.querySelectorAll('.tab2').forEach(t=>t.classList.toggle('active', t.dataset.sub===name));
+    document.querySelectorAll('.note-sub').forEach(p=>p.classList.add('hidden'));
+    if (REAL_SUBS.includes(name)){
+      document.querySelector('.note-sub[data-sub="'+name+'"]').classList.remove('hidden');
+    } else {
+      document.getElementById('subTitle').textContent = SUB_TITLES[name] || 'Section';
+      document.querySelector('.note-sub[data-sub="generic"]').classList.remove('hidden');
+    }
+  }
+
+  document.getElementById('tabs1').addEventListener('click', e=>{
+    const t = e.target.closest('.tab1'); if(!t) return; showMain(t.dataset.main);
+  });
+  document.getElementById('tabs2').addEventListener('click', e=>{
+    const t = e.target.closest('.tab2'); if(!t) return; showSub(t.dataset.sub);
+  });
+
+  /* ---------- PHQ-9 ---------- */
+  const scores = {};
+  function severity(total){
+    if (total<=4)  return ['Minimal or none','sev-min'];
+    if (total<=9)  return ['Mild','sev-mild'];
+    if (total<=14) return ['Moderate','sev-mod'];
+    if (total<=19) return ['Moderately severe','sev-modsev'];
+    return ['Severe','sev-sev'];
+  }
+  function updateScore(){
+    let total=0, answered=0;
+    for (let q=1; q<=9; q++){ if (scores[q]!=null){ total+=scores[q]; answered++; } }
+    document.getElementById('phqTotal').textContent = total;
+    document.getElementById('phqAnswered').textContent = answered+' of 9 answered';
+    const [label, cls] = severity(total);
+    const sev = document.getElementById('phqSev');
+    sev.textContent = label;
+    sev.className = 'phq-sev '+cls;
+    document.getElementById('phqAlert').style.display = (scores[9]>0) ? 'flex' : 'none';
+  }
+  document.querySelectorAll('.phq-opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const q = btn.dataset.q;
+      document.querySelectorAll('.phq-opt[data-q="'+q+'"]').forEach(b=>b.classList.remove('selected'));
+      btn.classList.add('selected');
+      scores[q] = parseInt(btn.dataset.score, 10);
+      updateScore();
+    });
+  });
+  document.getElementById('phqReset').addEventListener('click', ()=>{
+    document.querySelectorAll('.phq-opt.selected').forEach(b=>b.classList.remove('selected'));
+    for (const k in scores) delete scores[k];
+    updateScore();
+    toast('PHQ-9 cleared');
+  });
+
+  /* ---------- Textarea auto-grow ---------- */
+  function autoGrow(el){ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; }
+  document.querySelectorAll('textarea.control').forEach(el=>{
+    el.addEventListener('input', ()=>autoGrow(el));
+  });
+  function growVisible(){ document.querySelectorAll('.note-sub:not(.hidden) textarea.control').forEach(autoGrow); }
+
+  // re-grow textareas when their sub-panel becomes visible
+  const _showSub = showSub;
+  showSub = function(name){ _showSub(name); growVisible(); };
+
+  /* ---------- Init ---------- */
+  showMain('soap');   // default: SOAP tab
+</script>
+</body>
+</html>
