@@ -45,20 +45,22 @@ Since `index.html` sits at the repo root, the repo can also be published as-is v
 icons, and a staff menu. Most icons are decorative; clickable ones raise a toast.
 
 **Left sidebar** — Client Dashboard, Client Information (active by default), Patient Intake
-Information, Medication Management / Rx, Client Orders, Client MAR, and SmartLinks. Two of these
-are wired up and switch what the main area shows:
+Information, Patient Form Filling, Medication Management / Rx, Client Orders, Client MAR, and
+SmartLinks. Three of these are wired up and switch what the main area shows:
 
 | Nav item | Shows |
 | --- | --- |
 | Client Information | The tabbed Psychiatric Note — SOAP, Service, Note, PHQ-9, Billing Diagnosis, Add-On Codes, Warnings |
-| Patient Intake Information | The intake form only — the tab strip and note toolbar are hidden and the document title changes |
+| Patient Intake Information | The completed intake form — filled in with the patient's record |
+| Patient Form Filling | A blank encounter form, ready to fill in |
 
-Returning to Client Information restores the note tab that was open before, along with the tab
-strip, toolbar, and title. Every other nav item toasts.
+The two form sections replace the note entirely: the tab strip and note toolbar are hidden and the
+document title changes. Returning to Client Information restores the note tab that was open before,
+along with the tab strip, toolbar, and title. Every other nav item toasts.
 
 **Document header** — "Psychiatric Note" with Effective date, Status, Author dropdown, and a
-**Sign** button. Under Patient Intake Information the title becomes "Patient Intake Information"
-and this toolbar is hidden — the intake form has its own action row instead.
+**Sign** button. In either sidebar form section the title changes to that section's name and this
+toolbar is hidden — those forms carry their own action rows.
 
 **Main tabs**
 
@@ -87,6 +89,19 @@ clicked into, selected, copied, and edited like any other field on the page. Rep
 **Add** link that toasts. The action row above the form has Save and History (toast) and **Print**
 (real `window.print()`, with print styles that drop the app chrome).
 
+**Patient Form Filling** — the other sidebar section: a blank, standard EMR encounter form, the
+counterpart to the filled-in intake record. Eleven numbered sections — encounter details, chief
+complaint & HPI, vitals & measurements, allergies & current medications, review of systems,
+objective/examination, assessment & diagnoses, plan/orders/prescriptions, follow-up, billing &
+coding, attestation & signature — built from empty inputs with placeholder hints, `— Select —`
+dropdowns, unchecked boxes, and empty repeating rows for allergies, medications, diagnoses and
+prescriptions. Required fields are marked with a red asterisk.
+
+Three things actually work: **BMI** calculates itself from the height and weight fields as you
+type, **Clear form** (top bar and footer) empties every field and resets every dropdown and
+checkbox, and **Print** prints the form. Save draft and Sign & close toast. Nothing persists —
+reloading resets the form.
+
 **Note sub-tabs** — General and Medical Decision Making are built out; Exam, AIMS, Diagnosis, and
 Psychotherapy are placeholders. General is pre-filled with a sample depression follow-up
 (chief complaint, HPI, medications, MSE, assessment, plan). Medical Decision Making has a problem
@@ -100,9 +115,12 @@ checkboxes.
 
 Everything real on the page is driven by the inline script at the bottom of the file:
 
-- **Section switching** — `showSection('intake' | 'client')`, driven by the two live sidebar items.
-  The intake view hides the tab strip and note toolbar and retitles the document header; going back
-  calls `showMain(currentMain)` to restore the tab that was open.
+- **Section switching** — `showSection('intake' | 'form' | 'client')`, driven by the three live
+  sidebar items and the `SECTIONS` map. A form section hides the tab strip and note toolbar and
+  retitles the document header; going back calls `showMain(currentMain)` to restore the tab that
+  was open.
+- **Form filling** — live BMI from height + weight, and Clear form resets every input, select and
+  checkbox in that panel.
 - **Tab switching** — main tabs and Note sub-tabs; unbuilt tabs fall back to a shared placeholder
   panel. Switching a main tab scrolls the content area back to the top.
 - **PHQ-9 scoring** — click a response per item; the total, `x of 9 answered` counter, and severity
@@ -127,12 +145,26 @@ Stable IDs are on the fields a demo snippet is most likely to target:
   `intake-bp`, `intake-hr`, `intake-rr`, `intake-temp`, `intake-ht`, `intake-wt`, `intake-bmi`;
   row-group and checkbox-group wrappers `intake-emergency`, `intake-allergies`, `intake-meds`,
   `intake-family`, `intake-conditions`, `intake-consents`
+- **Patient Form Filling** — all controls, all empty: `form-dos`, `form-time-in`, `form-time-out`,
+  `form-visit-type`, `form-location`, `form-provider`, `form-supervising`, `form-referral`,
+  `form-interpreter`, `form-reason`, `form-cc`, `form-onset`, `form-duration`, `form-severity`,
+  `form-context`, `form-hpi`, `form-pmh`, `form-bp-sys`, `form-bp-dia`, `form-bp-pos`, `form-hr`,
+  `form-rr`, `form-temp`, `form-temp-route`, `form-spo2`, `form-pain`, `form-ht-ft`, `form-ht-in`,
+  `form-wt`, `form-bmi` (read-only, auto-calculated), `form-vitals-by`, `form-nkda`,
+  `form-meds-reviewed`, `form-ros-negative`, `form-ros-notes`, `form-exam-general`,
+  `form-exam-orientation`, `form-exam-type`, `form-exam`, `form-mse`, `form-assessment`,
+  `form-plan`, `form-referrals`, `form-order-priority`, `form-instructions`, `form-followup`,
+  `form-followup-date`, `form-appt-scheduled`, `form-precautions`, `form-cpt`, `form-modifiers`,
+  `form-units`, `form-time-spent`, `form-coding-basis`, `form-pos`, `form-addon-codes`,
+  `form-prior-auth`, `form-attest`, `form-signer`, `form-credentials`, `form-sign-date`;
+  row/checkbox groups `form-allergies`, `form-medications`, `form-ros`, `form-diagnoses`,
+  `form-rx`, `form-orders`; buttons `formClear`, `formClear2`
 - **SOAP tab** — `soap-hpi`, `soap-ros`, `soap-pe`, `soap-ap`, `soap-goals`
 - **Note → General** — `cc`, `hpi`, `meds`, `mse`, `assess`, `plan`
 - **Note → Medical Decision Making** — `complexity`, `assoc`
 - **PHQ-9** — response buttons follow `phq9-q{1-9}-{0-3}` (e.g. `phq9-q4-2`); readouts are
   `phqTotal`, `phqSev`, `phqAnswered`, `phqAlert`, and `phqReset`
-- **Sidebar / header** — `nav-client`, `nav-intake`, `docTitle`
+- **Sidebar / header** — `nav-client`, `nav-intake`, `nav-form`, `docTitle`
 - **Tabs** — `tab-soap`, `tab-service`, `tab-note`, `tab-phq9`, `tab-billing`, `tab-addon`,
   `tab-warnings`; sub-tabs `subtab-general`, `subtab-exam`, `subtab-mdm`, `subtab-aims`,
   `subtab-diagnosis`, `subtab-psychotherapy`
@@ -144,11 +176,14 @@ Stable IDs are on the fields a demo snippet is most likely to target:
 Each page is a single file laid out in the same order: `:root` CSS variables (colors, borders,
 severity palette) → component styles → SVG icon sprite → markup → script. To restyle, change the
 variables at the top; to add a tab, add a `.tab1` with a `data-main` value plus a matching
-`.main-panel[data-main="…"]`, and register its title in the `showMain` fallback map.
+`.main-panel[data-main="…"]`, and register its title in the `showMain` fallback map. To add another
+standalone sidebar section, add a `.nav-item` calling `showSection('…')`, a matching
+`.main-panel[data-main="…"]`, and an entry in the `SECTIONS` map.
 
 Keep the two files in sync when changing shared structure — they currently differ only in the
 `<title>`, the right-rail diagnosis, and the rail's medications-vs-labs section. The Patient Intake
-Information form is identical in both files, so edits to it belong in both.
+Information and Patient Form Filling sections are identical in both files, so edits to them belong
+in both.
 
 ## Disclaimer
 
