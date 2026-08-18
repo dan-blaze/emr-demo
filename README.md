@@ -44,20 +44,26 @@ Since `index.html` sits at the repo root, the repo can also be published as-is v
 **Top bar** — product logo ("GenericCare"), patient context (`Williams, Katie (2104730)`), alert
 icons, and a staff menu. Most icons are decorative; clickable ones raise a toast.
 
-**Left sidebar** — Client Dashboard, Client Information (active), Medication Management / Rx with a
-**Patient Intake Information** sub-item under it, Client Orders, Client MAR, and SmartLinks. The
-intake sub-item is wired up: it opens the intake form in the main area (same view as the
-Patient Intake Information tab) and takes the active highlight; switching to any other main tab
-returns the highlight to Client Information. Every other nav item toasts.
+**Left sidebar** — Client Dashboard, Client Information (active by default), Patient Intake
+Information, Medication Management / Rx, Client Orders, Client MAR, and SmartLinks. Two of these
+are wired up and switch what the main area shows:
+
+| Nav item | Shows |
+| --- | --- |
+| Client Information | The tabbed Psychiatric Note — SOAP, Service, Note, PHQ-9, Billing Diagnosis, Add-On Codes, Warnings |
+| Patient Intake Information | The intake form only — the tab strip and note toolbar are hidden and the document title changes |
+
+Returning to Client Information restores the note tab that was open before, along with the tab
+strip, toolbar, and title. Every other nav item toasts.
 
 **Document header** — "Psychiatric Note" with Effective date, Status, Author dropdown, and a
-**Sign** button.
+**Sign** button. Under Patient Intake Information the title becomes "Patient Intake Information"
+and this toolbar is hidden — the intake form has its own action row instead.
 
 **Main tabs**
 
 | Tab | State |
 | --- | --- |
-| Patient Intake Information | Built out — the patient's intake record as a completed, filled-in form. |
 | SOAP | Built out — the default tab. Empty S/O/A/P + Treatment Goals textareas. |
 | Service | Placeholder |
 | Note | Built out — has its own sub-tabs (below) |
@@ -66,8 +72,9 @@ returns the highlight to Client Information. Every other nav item toasts.
 | Add-On Codes | Placeholder |
 | Warnings | Placeholder |
 
-**Patient Intake Information** — the leftmost tab, also reachable from the sidebar sub-item under
-Medication Management / Rx. The intake record shown the way a completed form looks in the chart: a
+**Patient Intake Information** — a sidebar section, not a tab: it shows only when you click
+**Patient Intake Information** in the left nav, and the note's tabs are untouched. The intake
+record shown the way a completed form looks in the chart: a
 patient identity bar, then 14 numbered sections (demographics, contact, emergency contacts,
 employment/guarantor, insurance, reason for visit, allergies, medications, medical & surgical
 history, family history, behavioral health history & safety, social history, intake screening &
@@ -93,9 +100,11 @@ checkboxes.
 
 Everything real on the page is driven by the inline script at the bottom of the file:
 
+- **Section switching** — `showSection('intake' | 'client')`, driven by the two live sidebar items.
+  The intake view hides the tab strip and note toolbar and retitles the document header; going back
+  calls `showMain(currentMain)` to restore the tab that was open.
 - **Tab switching** — main tabs and Note sub-tabs; unbuilt tabs fall back to a shared placeholder
-  panel. Switching a main tab scrolls the content area back to the top and syncs the sidebar
-  highlight between Client Information and the Patient Intake Information sub-item.
+  panel. Switching a main tab scrolls the content area back to the top.
 - **PHQ-9 scoring** — click a response per item; the total, `x of 9 answered` counter, and severity
   band update live. Bands: 0–4 minimal, 5–9 mild, 10–14 moderate, 15–19 moderately severe, 20–27
   severe. Answering item 9 (self-harm thoughts) above `Not at all` reveals a safety alert. **Reset**
@@ -123,8 +132,8 @@ Stable IDs are on the fields a demo snippet is most likely to target:
 - **Note → Medical Decision Making** — `complexity`, `assoc`
 - **PHQ-9** — response buttons follow `phq9-q{1-9}-{0-3}` (e.g. `phq9-q4-2`); readouts are
   `phqTotal`, `phqSev`, `phqAnswered`, `phqAlert`, and `phqReset`
-- **Sidebar** — `nav-client`, `nav-intake`
-- **Tabs** — `tab-intake`, `tab-soap`, `tab-service`, `tab-note`, `tab-phq9`, `tab-billing`, `tab-addon`,
+- **Sidebar / header** — `nav-client`, `nav-intake`, `docTitle`
+- **Tabs** — `tab-soap`, `tab-service`, `tab-note`, `tab-phq9`, `tab-billing`, `tab-addon`,
   `tab-warnings`; sub-tabs `subtab-general`, `subtab-exam`, `subtab-mdm`, `subtab-aims`,
   `subtab-diagnosis`, `subtab-psychotherapy`
 - **Right rail** — `rail-dx`, `rail-age`, `rail-bp`, `rail-hr`, `rail-rr`, `rail-temp`, `rail-wt`,
