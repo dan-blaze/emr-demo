@@ -279,6 +279,8 @@
                border-radius:5px; padding:9px 12px; margin-bottom:11px; font-size:12px; color:#a5281b; }
   .ifm-alert .ic { color:#cf4032; margin-top:1px; }
   .ifm-alert b { font-weight:700; }
+  .ifm-alert.info { background:var(--blue-pale); border-color:var(--blue-tint); color:var(--blue-deep); }
+  .ifm-alert.info .ic { color:var(--blue); }
 
   .ifm-sign { display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--muted); margin-top:4px; }
   .ifm-sign .chip { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
@@ -400,12 +402,13 @@
         <div class="nav-item" onclick="toast('Client Dashboard (demo)')"><svg class="ic"><use href="#i-home"/></svg> Client Dashboard</div>
         <div class="nav-item active" id="nav-client" onclick="showSection('client')"><svg class="ic"><use href="#i-idcard"/></svg> Client Information</div>
         <div class="nav-item" id="nav-intake" onclick="showSection('intake')"><svg class="ic"><use href="#i-clipboard"/></svg> Patient Intake Information</div>
-        <div class="nav-item" id="nav-form" onclick="showSection('form')"><svg class="ic"><use href="#i-list"/></svg> Patient Form Filling</div>
         <div class="nav-item" onclick="toast('Medication Management (demo)')"><svg class="ic"><use href="#i-pill"/></svg> Medication Management / Rx</div>
         <div class="nav-item" onclick="toast('Client Orders (demo)')"><svg class="ic"><use href="#i-clipboard"/></svg> Client Orders</div>
         <div class="nav-item" onclick="toast('Client MAR (demo)')"><svg class="ic"><use href="#i-table"/></svg> Client MAR</div>
         <div class="nav-sep"></div>
         <div class="nav-item" onclick="toast('SmartLinks (demo)')"><svg class="ic"><use href="#i-link"/></svg> SmartLinks</div>
+        <div class="nav-sep"></div>
+        <div class="nav-item" id="nav-form" onclick="showSection('form')"><svg class="ic"><use href="#i-list"/></svg> Patient Form Filling</div>
       </div>
     </nav>
 
@@ -1179,7 +1182,7 @@
 
           <div class="ifm-bar">
             <span class="ifm-stamp draft">Draft &middot; Unsigned</span>
-            <span class="ifm-note">Encounter form E&amp;M-200 &middot; new blank form &middot; no data entered</span>
+            <span class="ifm-note">Encounter form E&amp;M-200 &middot; new patient encounter &middot; no data entered</span>
             <span class="spacer"></span>
             <button class="ifm-btn" onclick="toast('Draft saved (demo)')"><svg class="ic"><use href="#i-save"/></svg>Save draft</button>
             <button class="ifm-btn" onclick="window.print()"><svg class="ic"><use href="#i-print"/></svg>Print</button>
@@ -1188,17 +1191,144 @@
 
           <div class="sheet">
 
-          <div class="ifm-id">
-            <div class="b"><span class="lb">Patient</span><b>Williams, Katie A.</b></div>
-            <div class="b"><span class="lb">MRN</span><b>2104730</b></div>
-            <div class="b"><span class="lb">DOB</span><b>07/14/1979</b></div>
-            <div class="b"><span class="lb">Age</span><b>42 y</b></div>
-            <div class="b"><span class="lb">Sex</span><b>Female</b></div>
-            <div class="b"><span class="lb">Encounter</span><b>New &mdash; unsaved</b></div>
+          <div class="ifm-alert info">
+            <svg class="ic"><use href="#i-info"/></svg>
+            <span><b>New form &mdash; not linked to a chart.</b> This encounter is not attached to the patient open in the banner. Enter the patient&rsquo;s details below; fields marked <span class="ifm-req">*</span> are required before it can be signed. Nothing is saved &mdash; reloading the page clears the form.</span>
           </div>
-          <div class="ifm-src">Fields marked <span class="ifm-req">*</span> are required before the encounter can be signed. Nothing on this form is saved &mdash; reloading the page clears it.</div>
 
-          <div class="section-bar">1 &middot; Encounter Details</div>
+          <div class="section-bar">1 &middot; Patient Information</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld">
+              <label for="form-last-name">Last name <span class="ifm-req">*</span></label>
+              <input class="control" id="form-last-name" placeholder="Last name" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-first-name">First name <span class="ifm-req">*</span></label>
+              <input class="control" id="form-first-name" placeholder="First name" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-middle-name">Middle name</label>
+              <input class="control" id="form-middle-name" placeholder="Middle name or initial" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-preferred-name">Preferred name</label>
+              <input class="control" id="form-preferred-name" placeholder="Goes by" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-dob">Date of birth <span class="ifm-req">*</span></label>
+              <input class="control" id="form-dob" placeholder="MM/DD/YYYY" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-age">Age</label>
+              <input class="control" id="form-age" placeholder="Years" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-sex">Sex assigned at birth <span class="ifm-req">*</span></label>
+              <select class="control" id="form-sex">
+                <option value="">&mdash; Select &mdash;</option>
+                <option>Female</option>
+                <option>Male</option>
+                <option>Intersex</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="form-gender">Gender identity</label>
+              <select class="control" id="form-gender">
+                <option value="">&mdash; Select &mdash;</option>
+                <option>Female</option>
+                <option>Male</option>
+                <option>Non-binary</option>
+                <option>Transgender female</option>
+                <option>Transgender male</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="form-pronouns">Pronouns</label>
+              <select class="control" id="form-pronouns">
+                <option value="">&mdash; Select &mdash;</option>
+                <option>she / her</option>
+                <option>he / him</option>
+                <option>they / them</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="form-mrn">MRN</label>
+              <input class="control" id="form-mrn" placeholder="Leave blank to assign on save" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-account">Account number</label>
+              <input class="control" id="form-account" placeholder="Assigned on save" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-marital">Marital status</label>
+              <select class="control" id="form-marital">
+                <option value="">&mdash; Select &mdash;</option>
+                <option>Single</option>
+                <option>Married</option>
+                <option>Divorced</option>
+                <option>Separated</option>
+                <option>Widowed</option>
+                <option>Partnered</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="form-language">Preferred language</label>
+              <input class="control" id="form-language" placeholder="e.g. English" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-need-interpreter">Interpreter needed</label>
+              <select class="control" id="form-need-interpreter">
+                <option value="">&mdash; Select &mdash;</option>
+                <option>No</option>
+                <option>Yes</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="form-phone">Mobile phone <span class="ifm-req">*</span></label>
+              <input class="control" id="form-phone" placeholder="(___) ___-____" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-email">Email</label>
+              <input class="control" id="form-email" placeholder="name@example.com" value="" />
+            </div>
+            <div class="ifm-fld span2">
+              <label for="form-address">Street address</label>
+              <input class="control" id="form-address" placeholder="Street, apartment or unit" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-city">City</label>
+              <input class="control" id="form-city" placeholder="City" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-state">State</label>
+              <input class="control" id="form-state" placeholder="State" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-zip">ZIP code</label>
+              <input class="control" id="form-zip" placeholder="ZIP" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-payer">Primary payer</label>
+              <input class="control" id="form-payer" placeholder="Insurance plan" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-member-id">Member ID</label>
+              <input class="control" id="form-member-id" placeholder="Policy or member number" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-emergency-name">Emergency contact</label>
+              <input class="control" id="form-emergency-name" placeholder="Name and relationship" value="" />
+            </div>
+            <div class="ifm-fld">
+              <label for="form-emergency-phone">Emergency contact phone</label>
+              <input class="control" id="form-emergency-phone" placeholder="(___) ___-____" value="" />
+            </div>
+          </div>
+
+          <div class="section-bar">2 &middot; Encounter Details</div>
           <div class="ifm-grid">
             <div class="ifm-fld">
               <label for="form-dos">Date of service <span class="ifm-req">*</span></label>
@@ -1274,7 +1404,7 @@
             </div>
           </div>
 
-          <div class="section-bar">2 &middot; Chief Complaint &amp; History of Present Illness</div>
+          <div class="section-bar">3 &middot; Chief Complaint &amp; History of Present Illness</div>
           <div class="ifm-grid">
             <div class="ifm-fld span2">
               <label for="form-cc">Chief complaint <span class="ifm-req">*</span></label>
@@ -1319,7 +1449,7 @@
             </div>
           </div>
 
-          <div class="section-bar">3 &middot; Vitals &amp; Measurements</div>
+          <div class="section-bar">4 &middot; Vitals &amp; Measurements</div>
           <div class="ifm-grid">
             <div class="ifm-fld">
               <label for="form-bp-sys">Blood pressure &mdash; systolic</label>
@@ -1404,7 +1534,7 @@
             </div>
           </div>
 
-          <div class="section-bar">4 &middot; Allergies &amp; Current Medications</div>
+          <div class="section-bar">5 &middot; Allergies &amp; Current Medications</div>
           <div class="ifm-checks c2" style="margin-bottom:12px">
             <label class="check"><input type="checkbox" id="form-nkda" /><span>No known drug allergies (NKDA)</span></label>
             <label class="check"><input type="checkbox" id="form-meds-reviewed" /><span>Medication list reviewed with patient today</span></label>
@@ -1455,7 +1585,7 @@
           </div>
           <button type="button" class="ifm-add" onclick="toast('Add medication (demo)')"><svg class="ic"><use href="#i-plus"/></svg>Add medication</button>
 
-          <div class="section-bar">5 &middot; Review of Systems</div>
+          <div class="section-bar">6 &middot; Review of Systems</div>
           <div class="ifm-checks c2" style="margin-bottom:10px">
             <label class="check"><input type="checkbox" id="form-ros-negative" /><span>All systems reviewed and negative except as noted</span></label>
             <label class="check"><input type="checkbox" /><span>Unable to obtain &mdash; see note</span></label>
@@ -1484,7 +1614,7 @@
             </div>
           </div>
 
-          <div class="section-bar">6 &middot; Objective &mdash; Examination</div>
+          <div class="section-bar">7 &middot; Objective &mdash; Examination</div>
           <div class="ifm-grid">
             <div class="ifm-fld">
               <label for="form-exam-general">General appearance</label>
@@ -1525,7 +1655,7 @@
             </div>
           </div>
 
-          <div class="section-bar">7 &middot; Assessment &amp; Diagnoses</div>
+          <div class="section-bar">8 &middot; Assessment &amp; Diagnoses</div>
           <div class="ifm-rows" id="form-diagnoses">
             <div class="hdr" style="grid-template-columns:0.9fr 2fr 0.9fr 1fr 0.9fr"><span>ICD-10 code</span><span>Diagnosis description</span><span>Type</span><span>Status</span><span>Onset</span></div>
             <div class="row" style="grid-template-columns:0.9fr 2fr 0.9fr 1fr 0.9fr">
@@ -1559,7 +1689,7 @@
             </div>
           </div>
 
-          <div class="section-bar">8 &middot; Plan, Orders &amp; Prescriptions</div>
+          <div class="section-bar">9 &middot; Plan, Orders &amp; Prescriptions</div>
           <div class="ifm-grid">
             <div class="ifm-fld full">
               <label for="form-plan">Treatment plan</label>
@@ -1627,7 +1757,7 @@
             </div>
           </div>
 
-          <div class="section-bar">9 &middot; Follow-up</div>
+          <div class="section-bar">10 &middot; Follow-up</div>
           <div class="ifm-grid">
             <div class="ifm-fld">
               <label for="form-followup">Follow-up interval</label>
@@ -1662,7 +1792,7 @@
             </div>
           </div>
 
-          <div class="section-bar">10 &middot; Billing &amp; Coding</div>
+          <div class="section-bar">11 &middot; Billing &amp; Coding</div>
           <div class="ifm-grid">
             <div class="ifm-fld">
               <label for="form-cpt">E&amp;M / CPT code <span class="ifm-req">*</span></label>
@@ -1724,7 +1854,7 @@
             </div>
           </div>
 
-          <div class="section-bar">11 &middot; Attestation &amp; Signature</div>
+          <div class="section-bar">12 &middot; Attestation &amp; Signature</div>
           <div class="ifm-checks c2" style="margin-bottom:12px">
             <label class="check"><input type="checkbox" id="form-attest" /><span>I attest that this documentation is accurate and complete for the services rendered.</span></label>
             <label class="check"><input type="checkbox" /><span>Note prepared with scribe assistance &mdash; reviewed by provider.</span></label>
@@ -2097,6 +2227,8 @@
     document.getElementById('tabs1').style.display = sec ? 'none' : '';
     document.querySelector('.doc-toolbar').style.display = sec ? 'none' : '';
     document.getElementById('docTitle').textContent = sec ? sec.title : 'Psychiatric Note';
+    // the new-encounter form is not tied to the open chart, so its patient rail is hidden
+    document.getElementById('rail').style.display = (name === 'form') ? 'none' : '';
     if (sec){
       document.getElementById('tabs2').style.display = 'none';
       document.querySelectorAll('.main-panel').forEach(p=>p.classList.add('hidden'));

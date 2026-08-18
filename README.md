@@ -45,18 +45,20 @@ Since `index.html` sits at the repo root, the repo can also be published as-is v
 icons, and a staff menu. Most icons are decorative; clickable ones raise a toast.
 
 **Left sidebar** — Client Dashboard, Client Information (active by default), Patient Intake
-Information, Patient Form Filling, Medication Management / Rx, Client Orders, Client MAR, and
-SmartLinks. Three of these are wired up and switch what the main area shows:
+Information, Medication Management / Rx, Client Orders, Client MAR, SmartLinks, and — below its own
+separator at the bottom, since it belongs to no chart — Patient Form Filling. Three items are wired
+up and switch what the main area shows:
 
 | Nav item | Shows |
 | --- | --- |
 | Client Information | The tabbed Psychiatric Note — SOAP, Service, Note, PHQ-9, Billing Diagnosis, Add-On Codes, Warnings |
-| Patient Intake Information | The completed intake form — filled in with the patient's record |
-| Patient Form Filling | A blank encounter form, ready to fill in |
+| Patient Intake Information | The completed intake form — filled in with the open chart's record |
+| Patient Form Filling | A blank encounter form for a new patient — nothing pre-filled |
 
-The two form sections replace the note entirely: the tab strip and note toolbar are hidden and the
-document title changes. Returning to Client Information restores the note tab that was open before,
-along with the tab strip, toolbar, and title. Every other nav item toasts.
+Both form sections replace the note entirely: the tab strip and note toolbar are hidden and the
+document title changes. Patient Form Filling also hides the right-hand patient rail, because it is
+not tied to the chart in the banner. Returning to Client Information restores the note tab that was
+open before, along with the tab strip, toolbar, rail, and title. Every other nav item toasts.
 
 **Document header** — "Psychiatric Note" with Effective date, Status, Author dropdown, and a
 **Sign** button. In either sidebar form section the title changes to that section's name and this
@@ -89,13 +91,16 @@ clicked into, selected, copied, and edited like any other field on the page. Rep
 **Add** link that toasts. The action row above the form has Save and History (toast) and **Print**
 (real `window.print()`, with print styles that drop the app chrome).
 
-**Patient Form Filling** — the other sidebar section: a blank, standard EMR encounter form, the
-counterpart to the filled-in intake record. Eleven numbered sections — encounter details, chief
-complaint & HPI, vitals & measurements, allergies & current medications, review of systems,
-objective/examination, assessment & diagnoses, plan/orders/prescriptions, follow-up, billing &
-coding, attestation & signature — built from empty inputs with placeholder hints, `— Select —`
-dropdowns, unchecked boxes, and empty repeating rows for allergies, medications, diagnoses and
-prescriptions. Required fields are marked with a red asterisk.
+**Patient Form Filling** — the bottom sidebar section: a blank, standard EMR encounter form for a
+**new** patient. It is deliberately not attached to the chart in the banner — the patient's name,
+DOB, sex, MRN, contact details, payer and emergency contact are all entered on the form itself,
+and the patient summary rail is hidden while it is open. Twelve numbered sections — patient
+information, encounter details, chief complaint & HPI, vitals & measurements, allergies & current
+medications, review of systems, objective/examination, assessment & diagnoses,
+plan/orders/prescriptions, follow-up, billing & coding, attestation & signature — built from empty
+inputs with placeholder hints, `— Select —` dropdowns, unchecked boxes, and empty repeating rows
+for allergies, medications, diagnoses and prescriptions. Required fields are marked with a red
+asterisk.
 
 Three things actually work: **BMI** calculates itself from the height and weight fields as you
 type, **Clear form** (top bar and footer) empties every field and resets every dropdown and
@@ -120,7 +125,7 @@ Everything real on the page is driven by the inline script at the bottom of the 
   retitles the document header; going back calls `showMain(currentMain)` to restore the tab that
   was open.
 - **Form filling** — live BMI from height + weight, and Clear form resets every input, select and
-  checkbox in that panel.
+  checkbox in that panel. The section also hides `#rail`, restored when leaving.
 - **Tab switching** — main tabs and Note sub-tabs; unbuilt tabs fall back to a shared placeholder
   panel. Switching a main tab scrolls the content area back to the top.
 - **PHQ-9 scoring** — click a response per item; the total, `x of 9 answered` counter, and severity
@@ -145,7 +150,13 @@ Stable IDs are on the fields a demo snippet is most likely to target:
   `intake-bp`, `intake-hr`, `intake-rr`, `intake-temp`, `intake-ht`, `intake-wt`, `intake-bmi`;
   row-group and checkbox-group wrappers `intake-emergency`, `intake-allergies`, `intake-meds`,
   `intake-family`, `intake-conditions`, `intake-consents`
-- **Patient Form Filling** — all controls, all empty: `form-dos`, `form-time-in`, `form-time-out`,
+- **Patient Form Filling** — all controls, all empty. Patient identity (entered per form, not
+  inherited from the chart): `form-last-name`, `form-first-name`, `form-middle-name`,
+  `form-preferred-name`, `form-dob`, `form-age`, `form-sex`, `form-gender`, `form-pronouns`,
+  `form-mrn`, `form-account`, `form-marital`, `form-language`, `form-need-interpreter`,
+  `form-phone`, `form-email`, `form-address`, `form-city`, `form-state`, `form-zip`, `form-payer`,
+  `form-member-id`, `form-emergency-name`, `form-emergency-phone`. Encounter:
+  `form-dos`, `form-time-in`, `form-time-out`,
   `form-visit-type`, `form-location`, `form-provider`, `form-supervising`, `form-referral`,
   `form-interpreter`, `form-reason`, `form-cc`, `form-onset`, `form-duration`, `form-severity`,
   `form-context`, `form-hpi`, `form-pmh`, `form-bp-sys`, `form-bp-dia`, `form-bp-pos`, `form-hr`,
