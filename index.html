@@ -217,6 +217,103 @@
                background:#fdecea; border:1px solid #f2bcb6; color:#a5281b; font-size:12px; }
   .phq-alert .ic { color:#cf4032; }
 
+  /* ===== Patient Intake Information (printed-document view) ===== */
+  .pdoc { max-width:1000px; }
+  .pdoc-actions { display:flex; align-items:center; gap:10px; margin-bottom:14px; flex-wrap:wrap; }
+  .pdoc-actions .spacer { flex:1 1 auto; }
+  .pdoc-stamp { font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:700;
+                color:#1f6b46; background:#e6f4ec; border:1px solid #b8dcc7; border-radius:12px; padding:3px 11px; }
+  .pdoc-btn { font-size:12px; font-family:var(--font); color:var(--blue-deep); background:#fff;
+              border:1px solid var(--border); border-radius:3px; padding:5px 12px; cursor:pointer;
+              display:inline-flex; align-items:center; gap:6px; }
+  .pdoc-btn:hover { background:var(--blue-pale); border-color:var(--blue); }
+  .pdoc-btn .ic { width:14px; height:14px; }
+
+  .pdoc-page { background:#fff; border:1px solid var(--border); box-shadow:0 2px 12px rgba(40,70,90,.16);
+               padding:30px 38px 20px; margin-bottom:20px; }
+  .pdoc-head { display:flex; justify-content:space-between; align-items:flex-start; gap:20px;
+               border-bottom:2px solid var(--blue-deep); padding-bottom:11px; }
+  .pdoc-org { font-size:15px; font-weight:700; color:#274a72; letter-spacing:.2px; }
+  .pdoc-org .l2 { font-size:11.5px; font-weight:400; color:var(--label); margin-top:2px; }
+  .pdoc-org .l3 { font-size:11px; font-weight:400; color:var(--muted); }
+  .pdoc-doc { text-align:right; flex:0 0 auto; }
+  .pdoc-doc .t { font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:.9px; color:#274a72; }
+  .pdoc-doc .m { font-size:10.5px; color:var(--muted); margin-top:3px; }
+
+  .pdoc-ptbar { display:flex; flex-wrap:wrap; gap:4px 26px; background:#f4f7fa; border:1px solid var(--border-soft);
+                border-top:none; padding:8px 12px; }
+  .pdoc-ptbar .b { font-size:12px; color:var(--text); }
+  .pdoc-ptbar .b .lb { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-right:5px; }
+  .pdoc-ptbar .b b { font-weight:600; }
+  .pdoc-source { font-size:11px; color:var(--muted); margin:7px 0 2px; }
+  .pdoc-source b { color:var(--label); font-weight:600; }
+
+  .pdoc-sec { margin-top:17px; }
+  .pdoc-sec > h3 { font-size:11px; text-transform:uppercase; letter-spacing:.8px; font-weight:700;
+                   background:var(--section-bg); color:var(--section-text); padding:5px 10px; margin:0 0 10px;
+                   border-radius:2px; display:flex; align-items:center; gap:8px; }
+  .pdoc-sec > h3 .n { font-size:10px; opacity:.7; }
+  .pdoc-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px 30px; }
+  .pdoc-grid.g3 { grid-template-columns:1fr 1fr 1fr; }
+  .pdoc-grid .full { grid-column:1 / -1; }
+  @media (max-width:820px){ .pdoc-grid, .pdoc-grid.g3 { grid-template-columns:1fr; } }
+  .pdoc-f { display:flex; align-items:baseline; gap:10px; border-bottom:1px dotted #ccd6e0; padding-bottom:3px; }
+  .pdoc-f .k { flex:0 0 39%; font-size:10px; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); }
+  .pdoc-f .v { flex:1 1 auto; font-size:12.5px; color:var(--text); font-weight:600; }
+  .pdoc-f .v.na { color:var(--muted); font-weight:400; font-style:italic; }
+  .pdoc-prose { font-size:12.5px; color:var(--text); line-height:1.6; margin:0; }
+  .pdoc-prose + .pdoc-prose { margin-top:8px; }
+  .pdoc-quote { border-left:3px solid var(--blue-tint); background:#f8fbfd; padding:8px 12px; font-size:12.5px;
+                color:var(--text); line-height:1.6; }
+  .pdoc-quote .who { display:block; font-size:10.5px; color:var(--muted); margin-top:5px; }
+
+  .pdoc-table { width:100%; border-collapse:collapse; }
+  .pdoc-table th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted);
+                   font-weight:700; border-bottom:1px solid var(--border); padding:4px 8px; }
+  .pdoc-table td { font-size:12.5px; color:var(--text); border-bottom:1px solid var(--border-soft); padding:6px 8px;
+                   vertical-align:top; }
+  .pdoc-table tr:last-child td { border-bottom:none; }
+  .pdoc-table td .sub { display:block; font-size:11px; color:var(--muted); }
+
+  .pdoc-alert { display:flex; align-items:flex-start; gap:9px; background:#fdecea; border:1px solid #f2bcb6;
+                border-radius:4px; padding:8px 11px; margin-bottom:9px; font-size:12px; color:#a5281b; }
+  .pdoc-alert .ic { color:#cf4032; margin-top:1px; }
+  .pdoc-alert b { font-weight:700; }
+
+  .pdoc-checks { display:grid; grid-template-columns:repeat(3,1fr); gap:5px 18px; }
+  @media (max-width:820px){ .pdoc-checks { grid-template-columns:1fr 1fr; } }
+  .pdoc-chk { font-size:12.5px; color:var(--text); display:flex; align-items:baseline; gap:7px; }
+  .pdoc-chk::before { content:"\2610"; font-size:14px; color:var(--muted); line-height:1; }
+  .pdoc-chk.on::before { content:"\2611"; color:var(--blue); }
+  .pdoc-chk.off { color:var(--muted); }
+
+  .pdoc-scores { display:flex; flex-wrap:wrap; gap:10px; }
+  .pdoc-score { flex:1 1 150px; border:1px solid var(--border-soft); border-radius:4px; background:#f6f9fc; padding:8px 11px; }
+  .pdoc-score .k { font-size:10px; text-transform:uppercase; letter-spacing:.4px; color:var(--muted); }
+  .pdoc-score .v { font-size:16px; font-weight:700; color:#274a72; line-height:1.3; }
+  .pdoc-score .n { font-size:11px; color:var(--label); }
+  .pdoc-score.flag { background:#fdf5e8; border-color:#eed9b0; }
+  .pdoc-score.flag .v { color:#b07510; }
+
+  .pdoc-sign { display:grid; grid-template-columns:1fr 1fr; gap:16px 30px; margin-top:6px; }
+  @media (max-width:820px){ .pdoc-sign { grid-template-columns:1fr; } }
+  .pdoc-sig .ink { font-family:"Segoe Script","Bradley Hand","Snell Roundhand",cursive; font-size:20px; color:#1c3a5e;
+                   padding:4px 4px 2px; border-bottom:1px solid var(--label); }
+  .pdoc-sig .cap { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); margin-top:4px;
+                   display:flex; justify-content:space-between; gap:10px; }
+
+  .pdoc-foot { display:flex; justify-content:space-between; align-items:baseline; gap:14px; flex-wrap:wrap;
+               border-top:1px solid var(--border-soft); margin-top:20px; padding-top:8px;
+               font-size:10.5px; color:var(--muted); }
+
+  @media print {
+    body { background:#fff; }
+    .topbar, .sidebar, .rail, .doc-title, .doc-toolbar, .tabs1, .tabs2, .disclaimer, .pdoc-actions, .toast { display:none !important; }
+    .ehr, .body, .main, .content { display:block; height:auto; overflow:visible; }
+    .content { padding:0; }
+    .pdoc-page { border:none; box-shadow:none; margin:0; padding:0 0 18px; page-break-after:always; }
+  }
+
   .placeholder { background:#fff; border:1px dashed var(--border); border-radius:6px; padding:46px 24px;
                  text-align:center; color:var(--muted); max-width:1000px; }
   .placeholder .pt { font-size:15px; color:var(--label); margin-bottom:5px; }
@@ -367,6 +464,7 @@
 
       <!-- Main tabs -->
       <div class="tabs1" id="tabs1">
+        <div class="tab1" id="tab-intake" data-main="intake">Patient Intake Information</div>
         <div class="tab1 active" id="tab-soap" data-main="soap">SOAP</div>
         <div class="tab1" id="tab-service" data-main="service">Service</div>
         <div class="tab1" id="tab-note" data-main="note">Note</div>
@@ -387,6 +485,333 @@
       </div>
 
       <div class="content">
+
+        <!-- ===================== PATIENT INTAKE MAIN PANEL ===================== -->
+        <div class="main-panel hidden" data-main="intake">
+          <div class="pdoc">
+
+            <div class="pdoc-actions">
+              <span class="pdoc-stamp">Completed &middot; Verified</span>
+              <span style="font-size:11.5px;color:var(--muted)">Read-only document &middot; 2 pages &middot; last updated 03/29/2022 09:05</span>
+              <span class="spacer"></span>
+              <button class="pdoc-btn" onclick="window.print()"><svg class="ic"><use href="#i-print"/></svg>Print</button>
+              <button class="pdoc-btn" onclick="toast('Intake form re-sent to patient portal (demo)')"><svg class="ic"><use href="#i-share"/></svg>Send to portal</button>
+              <button class="pdoc-btn" onclick="toast('Revision history unavailable in this mock (demo)')"><svg class="ic"><use href="#i-history"/></svg>History</button>
+            </div>
+
+            <!-- ---------- Page 1 ---------- -->
+            <div class="pdoc-page">
+              <div class="pdoc-head">
+                <div class="pdoc-org">
+                  GenericCare Health
+                  <div class="l2">Behavioral Health Clinic &mdash; Adult Outpatient</div>
+                  <div class="l3">1400 Maple Street, Suite 210 &middot; Springfield, IL 62704 &middot; (217) 555-0142</div>
+                </div>
+                <div class="pdoc-doc">
+                  <div class="t">Patient Intake Information</div>
+                  <div class="m">Form BH-101 (rev. 04/2021) &middot; Page 1 of 2</div>
+                  <div class="m">Completed 03/29/2022 08:47</div>
+                </div>
+              </div>
+
+              <div class="pdoc-ptbar">
+                <div class="b"><span class="lb">Patient</span><b id="intake-name">Williams, Katie A.</b></div>
+                <div class="b"><span class="lb">MRN</span><b id="intake-mrn">2104730</b></div>
+                <div class="b"><span class="lb">DOB</span><b id="intake-dob">07/14/1979</b> (<span id="intake-age">42</span> y)</div>
+                <div class="b"><span class="lb">Sex</span><b id="intake-sex">Female</b></div>
+                <div class="b"><span class="lb">Account</span><b id="intake-acct">88291043</b></div>
+                <div class="b"><span class="lb">Visit</span><b id="intake-visit">03/29/2022</b></div>
+              </div>
+              <div class="pdoc-source">
+                <b>Source:</b> Patient-completed on front-desk tablet &middot;
+                <b>Verified by:</b> Ramirez, D., CMA on 03/29/2022 09:05 &middot;
+                <b>ID &amp; insurance card:</b> scanned to chart
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">1</span> Patient Demographics</h3>
+                <div class="pdoc-grid">
+                  <div class="pdoc-f"><span class="k">Legal name</span><span class="v">Williams, Katie Anne</span></div>
+                  <div class="pdoc-f"><span class="k">Preferred name</span><span class="v" id="intake-preferred">Katie</span></div>
+                  <div class="pdoc-f"><span class="k">Date of birth</span><span class="v">07/14/1979</span></div>
+                  <div class="pdoc-f"><span class="k">Age</span><span class="v">42 years</span></div>
+                  <div class="pdoc-f"><span class="k">Sex assigned at birth</span><span class="v">Female</span></div>
+                  <div class="pdoc-f"><span class="k">Gender identity</span><span class="v">Female</span></div>
+                  <div class="pdoc-f"><span class="k">Pronouns</span><span class="v" id="intake-pronouns">she / her</span></div>
+                  <div class="pdoc-f"><span class="k">Marital status</span><span class="v" id="intake-marital">Divorced</span></div>
+                  <div class="pdoc-f"><span class="k">Race</span><span class="v">White</span></div>
+                  <div class="pdoc-f"><span class="k">Ethnicity</span><span class="v">Not Hispanic or Latino</span></div>
+                  <div class="pdoc-f"><span class="k">Preferred language</span><span class="v" id="intake-language">English</span></div>
+                  <div class="pdoc-f"><span class="k">Interpreter needed</span><span class="v">No</span></div>
+                  <div class="pdoc-f"><span class="k">SSN</span><span class="v">&bull;&bull;&bull;-&bull;&bull;-4417</span></div>
+                  <div class="pdoc-f"><span class="k">Veteran status</span><span class="v">No</span></div>
+                  <div class="pdoc-f"><span class="k">Religion / spiritual pref.</span><span class="v na">Declined to answer</span></div>
+                  <div class="pdoc-f"><span class="k">Legal guardian</span><span class="v na">Not applicable</span></div>
+                </div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">2</span> Contact Information</h3>
+                <div class="pdoc-grid">
+                  <div class="pdoc-f full"><span class="k" style="flex-basis:19%">Home address</span><span class="v" id="intake-address">812 Ridgeway Drive, Apt 4B, Springfield, IL 62703</span></div>
+                  <div class="pdoc-f"><span class="k">Mailing address</span><span class="v">Same as home</span></div>
+                  <div class="pdoc-f"><span class="k">County</span><span class="v">Sangamon</span></div>
+                  <div class="pdoc-f"><span class="k">Mobile phone</span><span class="v" id="intake-phone">(217) 555-0188</span></div>
+                  <div class="pdoc-f"><span class="k">Home phone</span><span class="v na">None reported</span></div>
+                  <div class="pdoc-f"><span class="k">Email</span><span class="v" id="intake-email">k.williams79@example.com</span></div>
+                  <div class="pdoc-f"><span class="k">Preferred contact</span><span class="v">Mobile phone (text)</span></div>
+                  <div class="pdoc-f"><span class="k">OK to leave voicemail</span><span class="v">Yes &mdash; name and callback only</span></div>
+                  <div class="pdoc-f"><span class="k">Appointment reminders</span><span class="v">Text message, 24 h prior</span></div>
+                  <div class="pdoc-f"><span class="k">Patient portal</span><span class="v">Activated 02/11/2022</span></div>
+                  <div class="pdoc-f"><span class="k">Transportation barrier</span><span class="v">No &mdash; drives self</span></div>
+                </div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">3</span> Emergency Contacts &amp; Next of Kin</h3>
+                <table class="pdoc-table" id="intake-emergency">
+                  <thead>
+                    <tr><th style="width:24%">Name</th><th style="width:18%">Relationship</th><th style="width:20%">Phone</th><th style="width:20%">Priority</th><th>Release of information</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Doyle, Margaret<span class="sub">Springfield, IL</span></td><td>Mother</td><td>(217) 555-0119</td><td>Primary</td><td>Authorized &mdash; may discuss care</td></tr>
+                    <tr><td>Williams, Sean<span class="sub">Chatham, IL</span></td><td>Brother</td><td>(217) 555-0164</td><td>Secondary</td><td>Emergency only</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">4</span> Employment, Household &amp; Guarantor</h3>
+                <div class="pdoc-grid">
+                  <div class="pdoc-f"><span class="k">Employment status</span><span class="v">Employed, full time</span></div>
+                  <div class="pdoc-f"><span class="k">Occupation</span><span class="v" id="intake-occupation">Medical billing specialist</span></div>
+                  <div class="pdoc-f"><span class="k">Employer</span><span class="v">Sangamon Valley Clinic Group</span></div>
+                  <div class="pdoc-f"><span class="k">Work phone</span><span class="v">(217) 555-0200 ext. 314</span></div>
+                  <div class="pdoc-f"><span class="k">Guarantor</span><span class="v">Self (patient)</span></div>
+                  <div class="pdoc-f"><span class="k">Household size</span><span class="v">2 (patient + 1 dependent)</span></div>
+                  <div class="pdoc-f"><span class="k">Annual household income</span><span class="v">$45,000 &ndash; $59,999</span></div>
+                  <div class="pdoc-f"><span class="k">Sliding-fee eligibility</span><span class="v na">Not applicable &mdash; insured</span></div>
+                </div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">5</span> Insurance &amp; Coverage</h3>
+                <div class="pdoc-grid">
+                  <div class="pdoc-f"><span class="k">Primary payer</span><span class="v" id="intake-payer">BlueShield of Illinois &mdash; PPO</span></div>
+                  <div class="pdoc-f"><span class="k">Plan</span><span class="v">Choice Advantage 5000</span></div>
+                  <div class="pdoc-f"><span class="k">Member ID</span><span class="v" id="intake-memberid">XJP884210377</span></div>
+                  <div class="pdoc-f"><span class="k">Group number</span><span class="v">SVCG-0042</span></div>
+                  <div class="pdoc-f"><span class="k">Subscriber</span><span class="v">Self</span></div>
+                  <div class="pdoc-f"><span class="k">Effective date</span><span class="v">01/01/2022</span></div>
+                  <div class="pdoc-f"><span class="k">Specialist copay</span><span class="v">$30 per visit</span></div>
+                  <div class="pdoc-f"><span class="k">Deductible met</span><span class="v">$450 of $1,500</span></div>
+                  <div class="pdoc-f"><span class="k">Behavioral health carve-out</span><span class="v">None &mdash; managed by plan</span></div>
+                  <div class="pdoc-f"><span class="k">Prior authorization</span><span class="v">Not required for outpatient BH</span></div>
+                  <div class="pdoc-f"><span class="k">Secondary coverage</span><span class="v na">None reported</span></div>
+                  <div class="pdoc-f"><span class="k">Eligibility verified</span><span class="v">03/29/2022 08:52 &mdash; active</span></div>
+                </div>
+              </div>
+
+              <div class="pdoc-foot">
+                <span>Williams, Katie A. &middot; MRN 2104730 &middot; DOB 07/14/1979</span>
+                <span>Patient Intake Information &mdash; Page 1 of 2</span>
+                <span>Printed from GenericCare EHR (mock)</span>
+              </div>
+            </div><!-- /page 1 -->
+
+            <!-- ---------- Page 2 ---------- -->
+            <div class="pdoc-page">
+              <div class="pdoc-head">
+                <div class="pdoc-org">
+                  GenericCare Health
+                  <div class="l2">Behavioral Health Clinic &mdash; Adult Outpatient</div>
+                </div>
+                <div class="pdoc-doc">
+                  <div class="t">Patient Intake Information</div>
+                  <div class="m">Form BH-101 (rev. 04/2021) &middot; Page 2 of 2</div>
+                </div>
+              </div>
+
+              <div class="pdoc-ptbar">
+                <div class="b"><span class="lb">Patient</span><b>Williams, Katie A.</b></div>
+                <div class="b"><span class="lb">MRN</span><b>2104730</b></div>
+                <div class="b"><span class="lb">DOB</span><b>07/14/1979</b></div>
+                <div class="b"><span class="lb">Visit</span><b>03/29/2022</b></div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">6</span> Reason for Visit &amp; Referral</h3>
+                <div class="pdoc-grid" style="margin-bottom:10px">
+                  <div class="pdoc-f"><span class="k">Visit type</span><span class="v">Follow-up &mdash; established patient</span></div>
+                  <div class="pdoc-f"><span class="k">Symptom onset</span><span class="v">Approx. 8 months ago</span></div>
+                  <div class="pdoc-f"><span class="k">Referral source</span><span class="v" id="intake-referral">Patel, R., MD (primary care)</span></div>
+                  <div class="pdoc-f"><span class="k">Primary care provider</span><span class="v" id="intake-pcp">Patel, R., MD &mdash; Sangamon Family Medicine</span></div>
+                  <div class="pdoc-f"><span class="k">Preferred pharmacy</span><span class="v" id="intake-pharmacy">Maple Street Drug &mdash; (217) 555-0130</span></div>
+                  <div class="pdoc-f"><span class="k">Last visit here</span><span class="v">02/15/2022</span></div>
+                </div>
+                <div class="pdoc-quote" id="intake-reason">
+                  &ldquo;I&rsquo;ve been down most days for about eight months. I&rsquo;m sleeping badly, I don&rsquo;t enjoy things I used to,
+                  and it&rsquo;s getting hard to keep up at work. The sertraline has helped my energy a little but the mood is still low.&rdquo;
+                  <span class="who">Presenting concern, in the patient&rsquo;s own words</span>
+                </div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">7</span> Allergies &amp; Adverse Reactions</h3>
+                <div class="pdoc-alert">
+                  <svg class="ic"><use href="#i-warn"/></svg>
+                  <span><b>Drug allergy on file:</b> sulfonamide antibiotics &mdash; verify before prescribing.</span>
+                </div>
+                <table class="pdoc-table" id="intake-allergies">
+                  <thead>
+                    <tr><th style="width:26%">Allergen</th><th style="width:14%">Type</th><th style="width:26%">Reaction</th><th style="width:16%">Severity</th><th>Noted</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Sulfamethoxazole / trimethoprim</td><td>Medication</td><td>Diffuse rash, itching</td><td>Moderate</td><td>2014 &mdash; patient reported</td></tr>
+                    <tr><td>Latex</td><td>Environmental</td><td>Contact dermatitis</td><td>Mild</td><td>2016 &mdash; patient reported</td></tr>
+                    <tr><td>No known food allergies</td><td>Food</td><td>&mdash;</td><td>&mdash;</td><td>Confirmed 03/29/2022</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">8</span> Current Medications (self-reported)</h3>
+                <table class="pdoc-table" id="intake-meds">
+                  <thead>
+                    <tr><th style="width:28%">Medication</th><th style="width:20%">Dose &amp; route</th><th style="width:18%">Frequency</th><th style="width:20%">Prescriber</th><th>Started</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr><td>Zoloft <span class="sub">sertraline</span></td><td>50 mg PO</td><td>Once daily, AM</td><td>Reyes, A., MD</td><td>01/2022</td></tr>
+                    <tr><td>Metformin HCl</td><td>500 mg PO</td><td>Twice daily with meals</td><td>Patel, R., MD</td><td>2019</td></tr>
+                    <tr><td>Cholecalciferol <span class="sub">vitamin D3, OTC</span></td><td>2,000 IU PO</td><td>Once daily</td><td>Self</td><td>2020</td></tr>
+                    <tr><td>Ibuprofen <span class="sub">OTC</span></td><td>200&ndash;400 mg PO</td><td>As needed for headache</td><td>Self</td><td>&mdash;</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">9</span> Medical &amp; Surgical History</h3>
+                <div class="pdoc-checks" style="margin-bottom:11px" id="intake-conditions">
+                  <span class="pdoc-chk on">Depression</span>
+                  <span class="pdoc-chk on">Type 2 diabetes mellitus</span>
+                  <span class="pdoc-chk on">Obesity</span>
+                  <span class="pdoc-chk on">Migraine headaches</span>
+                  <span class="pdoc-chk off">Hypertension</span>
+                  <span class="pdoc-chk off">Thyroid disease</span>
+                  <span class="pdoc-chk off">Seizure disorder</span>
+                  <span class="pdoc-chk off">Asthma / COPD</span>
+                  <span class="pdoc-chk off">Cardiac disease</span>
+                  <span class="pdoc-chk off">Cancer</span>
+                  <span class="pdoc-chk off">Head injury / concussion</span>
+                  <span class="pdoc-chk off">Chronic pain</span>
+                </div>
+                <div class="pdoc-grid">
+                  <div class="pdoc-f"><span class="k">Prior surgeries</span><span class="v">Cholecystectomy (2016), wisdom teeth (2001)</span></div>
+                  <div class="pdoc-f"><span class="k">Hospitalizations, 12 mo</span><span class="v na">None</span></div>
+                  <div class="pdoc-f"><span class="k">Obstetric history</span><span class="v">G2 P2 &mdash; last delivery 2010</span></div>
+                  <div class="pdoc-f"><span class="k">Pregnancy status</span><span class="v">Not pregnant &mdash; patient reported</span></div>
+                  <div class="pdoc-f"><span class="k">Last physical exam</span><span class="v">11/2021 &mdash; Patel, R., MD</span></div>
+                  <div class="pdoc-f"><span class="k">Immunizations</span><span class="v">Up to date; influenza 10/2021</span></div>
+                </div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">10</span> Family History</h3>
+                <table class="pdoc-table" id="intake-family">
+                  <thead><tr><th style="width:24%">Relation</th><th style="width:44%">Conditions</th><th>Notes</th></tr></thead>
+                  <tbody>
+                    <tr><td>Mother, living (68)</td><td>Depression, type 2 diabetes</td><td>Treated with SSRI, good response</td></tr>
+                    <tr><td>Father, deceased (61)</td><td>Hypertension, myocardial infarction</td><td>Died 2011</td></tr>
+                    <tr><td>Sister (39)</td><td>Generalized anxiety disorder</td><td>In therapy</td></tr>
+                    <tr><td>Maternal grandmother</td><td>Dementia</td><td>Onset in her 70s</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">11</span> Behavioral Health History &amp; Safety</h3>
+                <div class="pdoc-grid">
+                  <div class="pdoc-f"><span class="k">Prior outpatient treatment</span><span class="v">CBT, 12 sessions (2018&ndash;2019)</span></div>
+                  <div class="pdoc-f"><span class="k">Prior psychiatric admission</span><span class="v na">None</span></div>
+                  <div class="pdoc-f"><span class="k">Prior suicide attempt</span><span class="v na">None reported</span></div>
+                  <div class="pdoc-f"><span class="k">Self-harm history</span><span class="v na">None reported</span></div>
+                  <div class="pdoc-f"><span class="k">Current SI / HI</span><span class="v" id="intake-si">Denies suicidal and homicidal ideation</span></div>
+                  <div class="pdoc-f"><span class="k">Firearms in home</span><span class="v">No</span></div>
+                  <div class="pdoc-f"><span class="k">Prior psychotropics</span><span class="v">Fluoxetine 2018 &mdash; stopped for nausea</span></div>
+                  <div class="pdoc-f"><span class="k">Safety plan on file</span><span class="v">Yes &mdash; reviewed 02/15/2022</span></div>
+                </div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">12</span> Social History</h3>
+                <div class="pdoc-grid">
+                  <div class="pdoc-f"><span class="k">Living situation</span><span class="v">Rents apartment; lives with 12-year-old daughter</span></div>
+                  <div class="pdoc-f"><span class="k">Relationship status</span><span class="v">Divorced 2019; co-parents</span></div>
+                  <div class="pdoc-f"><span class="k">Education</span><span class="v">Associate degree</span></div>
+                  <div class="pdoc-f"><span class="k">Housing / food insecurity</span><span class="v">Screened &mdash; negative</span></div>
+                  <div class="pdoc-f"><span class="k">Tobacco</span><span class="v">Former smoker &mdash; quit 2018, 5 pack-years</span></div>
+                  <div class="pdoc-f"><span class="k">Alcohol</span><span class="v">2&ndash;3 drinks per week</span></div>
+                  <div class="pdoc-f"><span class="k">Cannabis / other drugs</span><span class="v na">Denies</span></div>
+                  <div class="pdoc-f"><span class="k">Caffeine</span><span class="v">2 cups coffee daily</span></div>
+                  <div class="pdoc-f"><span class="k">Exercise</span><span class="v">Walks ~1&times; per week</span></div>
+                  <div class="pdoc-f"><span class="k">Sleep</span><span class="v">5&ndash;6 hours; frequent early waking</span></div>
+                  <div class="pdoc-f"><span class="k">Legal involvement</span><span class="v na">None</span></div>
+                  <div class="pdoc-f"><span class="k">Support system</span><span class="v">Mother, sister, one close friend</span></div>
+                </div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">13</span> Intake Screening &amp; Vitals</h3>
+                <div class="pdoc-scores" style="margin-bottom:11px">
+                  <div class="pdoc-score flag"><div class="k">PHQ-2</div><div class="v" id="intake-phq2">5</div><div class="n">Positive &mdash; PHQ-9 administered</div></div>
+                  <div class="pdoc-score flag"><div class="k">GAD-7</div><div class="v" id="intake-gad7">11</div><div class="n">Moderate anxiety</div></div>
+                  <div class="pdoc-score"><div class="k">AUDIT-C</div><div class="v" id="intake-auditc">2</div><div class="n">Below risk threshold</div></div>
+                  <div class="pdoc-score"><div class="k">C-SSRS</div><div class="v">Neg.</div><div class="n">No ideation reported</div></div>
+                </div>
+                <div class="pdoc-grid g3">
+                  <div class="pdoc-f"><span class="k">BP</span><span class="v" id="intake-bp">130/80 mmHg</span></div>
+                  <div class="pdoc-f"><span class="k">Heart rate</span><span class="v" id="intake-hr">72 bpm</span></div>
+                  <div class="pdoc-f"><span class="k">Resp. rate</span><span class="v" id="intake-rr">16 /min</span></div>
+                  <div class="pdoc-f"><span class="k">Temp</span><span class="v" id="intake-temp">98.6 &deg;F</span></div>
+                  <div class="pdoc-f"><span class="k">Height</span><span class="v" id="intake-ht">5 ft 4 in</span></div>
+                  <div class="pdoc-f"><span class="k">Weight</span><span class="v" id="intake-wt">185 lbs</span></div>
+                  <div class="pdoc-f"><span class="k">BMI</span><span class="v" id="intake-bmi">31.2</span></div>
+                  <div class="pdoc-f"><span class="k">Pain score</span><span class="v">0 / 10</span></div>
+                  <div class="pdoc-f"><span class="k">Taken by</span><span class="v">Ramirez, D., CMA at 09:02</span></div>
+                </div>
+              </div>
+
+              <div class="pdoc-sec">
+                <h3><span class="n">14</span> Consents &amp; Acknowledgments</h3>
+                <div class="pdoc-checks" style="grid-template-columns:1fr 1fr; margin-bottom:12px" id="intake-consents">
+                  <span class="pdoc-chk on">Notice of Privacy Practices received &mdash; 03/29/2022</span>
+                  <span class="pdoc-chk on">Consent for treatment signed &mdash; 03/29/2022</span>
+                  <span class="pdoc-chk on">Assignment of benefits &amp; financial policy</span>
+                  <span class="pdoc-chk on">Telehealth consent on file &mdash; 02/11/2022</span>
+                  <span class="pdoc-chk on">Release of information to Patel, R., MD</span>
+                  <span class="pdoc-chk off">Advance directive on file &mdash; information provided</span>
+                </div>
+                <div class="pdoc-sign">
+                  <div class="pdoc-sig">
+                    <div class="ink">Katie Williams</div>
+                    <div class="cap"><span>Patient signature</span><span>03/29/2022 08:47</span></div>
+                  </div>
+                  <div class="pdoc-sig">
+                    <div class="ink">D. Ramirez, CMA</div>
+                    <div class="cap"><span>Staff verification</span><span>03/29/2022 09:05</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pdoc-foot">
+                <span>Williams, Katie A. &middot; MRN 2104730 &middot; DOB 07/14/1979</span>
+                <span>Patient Intake Information &mdash; Page 2 of 2</span>
+                <span>Confidential &mdash; contains protected health information</span>
+              </div>
+            </div><!-- /page 2 -->
+
+          </div>
+        </div>
 
         <!-- ===================== SOAP MAIN PANEL (default) ===================== -->
         <div class="main-panel" data-main="soap">
@@ -695,7 +1120,7 @@
       document.querySelector('.main-panel[data-main="note"]').classList.remove('hidden');
       const active = document.querySelector('.tab2.active');
       showSub(active ? active.dataset.sub : 'mdm');
-    } else if (name==='phq9' || name==='soap'){
+    } else if (name==='phq9' || name==='soap' || name==='intake'){
       document.querySelector('.main-panel[data-main="'+name+'"]').classList.remove('hidden');
     } else {
       const g = document.querySelector('.main-panel[data-main="generic"]');

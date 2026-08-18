@@ -54,6 +54,7 @@ Client Orders, Client MAR, and SmartLinks.
 
 | Tab | State |
 | --- | --- |
+| Patient Intake Information | Built out — a read-only, two-page "printed form" view of the patient's intake record. |
 | SOAP | Built out — the default tab. Empty S/O/A/P + Treatment Goals textareas. |
 | Service | Placeholder |
 | Note | Built out — has its own sub-tabs (below) |
@@ -61,6 +62,15 @@ Client Orders, Client MAR, and SmartLinks.
 | Billing Diagnosis | Placeholder |
 | Add-On Codes | Placeholder |
 | Warnings | Placeholder |
+
+**Patient Intake Information** — the leftmost tab. Renders the completed intake packet the way a
+scanned/printed form looks in a chart, but as plain HTML: clinic letterhead, a patient identity bar,
+numbered sections (demographics, contact, emergency contacts, employment/guarantor, insurance,
+reason for visit, allergies, medications, medical & surgical history, family history, behavioral
+health history & safety, social history, intake screening scores & vitals, consents), signature
+lines, and per-page footers. It is display-only — no inputs. The action row above it has **Print**
+(real `window.print()`, with print styles that drop the app chrome and print just the two pages),
+plus Send to portal and History, which toast.
 
 **Note sub-tabs** — General and Medical Decision Making are built out; Exam, AIMS, Diagnosis, and
 Psychotherapy are placeholders. General is pre-filled with a sample depression follow-up
@@ -88,12 +98,20 @@ Everything real on the page is driven by the inline script at the bottom of the 
 
 Stable IDs are on the fields a demo snippet is most likely to target:
 
+- **Patient Intake Information** — `intake-name`, `intake-mrn`, `intake-dob`, `intake-age`,
+  `intake-sex`, `intake-acct`, `intake-visit`, `intake-preferred`, `intake-pronouns`,
+  `intake-marital`, `intake-language`, `intake-address`, `intake-phone`, `intake-email`,
+  `intake-occupation`, `intake-payer`, `intake-memberid`, `intake-referral`, `intake-pcp`,
+  `intake-pharmacy`, `intake-reason`, `intake-si`, `intake-phq2`, `intake-gad7`, `intake-auditc`,
+  `intake-bp`, `intake-hr`, `intake-rr`, `intake-temp`, `intake-ht`, `intake-wt`, `intake-bmi`;
+  table/section wrappers `intake-emergency`, `intake-allergies`, `intake-meds`, `intake-family`,
+  `intake-conditions`, `intake-consents`
 - **SOAP tab** — `soap-hpi`, `soap-ros`, `soap-pe`, `soap-ap`, `soap-goals`
 - **Note → General** — `cc`, `hpi`, `meds`, `mse`, `assess`, `plan`
 - **Note → Medical Decision Making** — `complexity`, `assoc`
 - **PHQ-9** — response buttons follow `phq9-q{1-9}-{0-3}` (e.g. `phq9-q4-2`); readouts are
   `phqTotal`, `phqSev`, `phqAnswered`, `phqAlert`, and `phqReset`
-- **Tabs** — `tab-soap`, `tab-service`, `tab-note`, `tab-phq9`, `tab-billing`, `tab-addon`,
+- **Tabs** — `tab-intake`, `tab-soap`, `tab-service`, `tab-note`, `tab-phq9`, `tab-billing`, `tab-addon`,
   `tab-warnings`; sub-tabs `subtab-general`, `subtab-exam`, `subtab-mdm`, `subtab-aims`,
   `subtab-diagnosis`, `subtab-psychotherapy`
 - **Right rail** — `rail-dx`, `rail-age`, `rail-bp`, `rail-hr`, `rail-rr`, `rail-temp`, `rail-wt`,
@@ -107,7 +125,8 @@ variables at the top; to add a tab, add a `.tab1` with a `data-main` value plus 
 `.main-panel[data-main="…"]`, and register its title in the `showMain` fallback map.
 
 Keep the two files in sync when changing shared structure — they currently differ only in the
-`<title>`, the right-rail diagnosis, and the rail's medications-vs-labs section.
+`<title>`, the right-rail diagnosis, and the rail's medications-vs-labs section. The Patient Intake
+Information document is identical in both files, so edits to it belong in both.
 
 ## Disclaimer
 
