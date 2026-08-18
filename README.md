@@ -46,7 +46,7 @@ icons, and a staff menu. Most icons are decorative; clickable ones raise a toast
 
 **Left sidebar** — Client Dashboard, Client Information (active), Medication Management / Rx with a
 **Patient Intake Information** sub-item under it, Client Orders, Client MAR, and SmartLinks. The
-intake sub-item is wired up: it opens the intake document in the main area (same view as the
+intake sub-item is wired up: it opens the intake form in the main area (same view as the
 Patient Intake Information tab) and takes the active highlight; switching to any other main tab
 returns the highlight to Client Information. Every other nav item toasts.
 
@@ -57,7 +57,7 @@ returns the highlight to Client Information. Every other nav item toasts.
 
 | Tab | State |
 | --- | --- |
-| Patient Intake Information | Built out — a read-only, two-page "printed form" view of the patient's intake record. |
+| Patient Intake Information | Built out — the patient's intake record as a completed, filled-in form. |
 | SOAP | Built out — the default tab. Empty S/O/A/P + Treatment Goals textareas. |
 | Service | Placeholder |
 | Note | Built out — has its own sub-tabs (below) |
@@ -66,17 +66,19 @@ returns the highlight to Client Information. Every other nav item toasts.
 | Add-On Codes | Placeholder |
 | Warnings | Placeholder |
 
-**Patient Intake Information** — the leftmost tab. Renders the completed intake packet the way a
-scanned/printed form looks in a chart, but as plain HTML: clinic letterhead, a patient identity bar,
-numbered sections (demographics, contact, emergency contacts, employment/guarantor, insurance,
-reason for visit, allergies, medications, medical & surgical history, family history, behavioral
-health history & safety, social history, intake screening scores & vitals, consents), signature
-lines, and per-page footers. It is display-only — no inputs, but all of its text is selectable and
-copyable (explicit `user-select: text`, text cursor, and a highlight color on the pages). Reachable
-from either the tab or the sidebar sub-item under Medication Management / Rx. The action row above
-it has **Print**
-(real `window.print()`, with print styles that drop the app chrome and print just the two pages),
-plus Send to portal and History, which toast.
+**Patient Intake Information** — the leftmost tab, also reachable from the sidebar sub-item under
+Medication Management / Rx. The intake record shown the way a completed form looks in the chart: a
+patient identity bar, then 14 numbered sections (demographics, contact, emergency contacts,
+employment/guarantor, insurance, reason for visit, allergies, medications, medical & surgical
+history, family history, behavioral health history & safety, social history, intake screening &
+vitals, consents & e-signature).
+
+Every value sits in a real, pre-filled control — text inputs, dropdowns with the recorded option
+selected, checked checkboxes, and a textarea for the presenting concern — so the text can be
+clicked into, selected, copied, and edited like any other field on the page. Repeating data
+(emergency contacts, allergies, medications, family history) uses labelled row groups with an
+**Add** link that toasts. The action row above the form has Save and History (toast) and **Print**
+(real `window.print()`, with print styles that drop the app chrome).
 
 **Note sub-tabs** — General and Medical Decision Making are built out; Exam, AIMS, Diagnosis, and
 Psychotherapy are placeholders. General is pre-filled with a sample depression follow-up
@@ -106,14 +108,16 @@ Everything real on the page is driven by the inline script at the bottom of the 
 
 Stable IDs are on the fields a demo snippet is most likely to target:
 
-- **Patient Intake Information** — `intake-name`, `intake-mrn`, `intake-dob`, `intake-age`,
-  `intake-sex`, `intake-acct`, `intake-visit`, `intake-preferred`, `intake-pronouns`,
+- **Patient Intake Information** — the identity bar (`intake-name`, `intake-mrn`, `intake-dob`,
+  `intake-age`, `intake-sex`, `intake-acct`, `intake-visit`) is plain text; every other ID below is
+  a form control, so read and write `.value` (or `.checked`) rather than `.textContent`:
+  `intake-preferred`, `intake-pronouns`,
   `intake-marital`, `intake-language`, `intake-address`, `intake-phone`, `intake-email`,
   `intake-occupation`, `intake-payer`, `intake-memberid`, `intake-referral`, `intake-pcp`,
   `intake-pharmacy`, `intake-reason`, `intake-si`, `intake-phq2`, `intake-gad7`, `intake-auditc`,
   `intake-bp`, `intake-hr`, `intake-rr`, `intake-temp`, `intake-ht`, `intake-wt`, `intake-bmi`;
-  table/section wrappers `intake-emergency`, `intake-allergies`, `intake-meds`, `intake-family`,
-  `intake-conditions`, `intake-consents`
+  row-group and checkbox-group wrappers `intake-emergency`, `intake-allergies`, `intake-meds`,
+  `intake-family`, `intake-conditions`, `intake-consents`
 - **SOAP tab** — `soap-hpi`, `soap-ros`, `soap-pe`, `soap-ap`, `soap-goals`
 - **Note → General** — `cc`, `hpi`, `meds`, `mse`, `assess`, `plan`
 - **Note → Medical Decision Making** — `complexity`, `assoc`
@@ -135,7 +139,7 @@ variables at the top; to add a tab, add a `.tab1` with a `data-main` value plus 
 
 Keep the two files in sync when changing shared structure — they currently differ only in the
 `<title>`, the right-rail diagnosis, and the rail's medications-vs-labs section. The Patient Intake
-Information document is identical in both files, so edits to it belong in both.
+Information form is identical in both files, so edits to it belong in both.
 
 ## Disclaimer
 
