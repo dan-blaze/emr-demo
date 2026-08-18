@@ -67,6 +67,10 @@
   .nav-item:hover { background:var(--nav-active); }
   .nav-item.active { background:rgba(255,255,255,0.10); border-left-color:var(--accent); font-weight:600; }
   .nav-item.active .ic { color:#fff; }
+  .nav-item.nav-sub { padding:8px 16px 8px 40px; font-size:12.5px; color:var(--nav-muted); }
+  .nav-item.nav-sub .ic { width:15px; height:15px; }
+  .nav-item.nav-sub:hover { color:var(--nav-text); }
+  .nav-item.nav-sub.active { color:#fff; }
   .nav-sep { height:1px; background:rgba(255,255,255,0.10); margin:8px 14px; }
 
   /* ===== Main ===== */
@@ -301,6 +305,11 @@
                border-top:1px solid var(--border-soft); margin-top:20px; padding-top:8px;
                font-size:10.5px; color:var(--muted); }
 
+  /* selectable document text */
+  .pdoc-page { -webkit-user-select:text; user-select:text; cursor:text; }
+  .pdoc-page ::selection { background:#bcd9f2; color:#12293f; }
+  .pdoc-page ::-moz-selection { background:#bcd9f2; color:#12293f; }
+
   @media print {
     body { background:#fff; }
     .topbar, .sidebar, .rail, .doc-title, .doc-toolbar, .tabs1, .tabs2, .disclaimer, .pdoc-actions, .toast { display:none !important; }
@@ -406,8 +415,9 @@
       </div>
       <div class="nav">
         <div class="nav-item" onclick="toast('Client Dashboard (demo)')"><svg class="ic"><use href="#i-home"/></svg> Client Dashboard</div>
-        <div class="nav-item active"><svg class="ic"><use href="#i-idcard"/></svg> Client Information</div>
+        <div class="nav-item active" id="nav-client"><svg class="ic"><use href="#i-idcard"/></svg> Client Information</div>
         <div class="nav-item" onclick="toast('Medication Management (demo)')"><svg class="ic"><use href="#i-pill"/></svg> Medication Management / Rx</div>
+        <div class="nav-item nav-sub" id="nav-intake" onclick="showMain('intake')"><svg class="ic"><use href="#i-clipboard"/></svg> Patient Intake Information</div>
         <div class="nav-item" onclick="toast('Client Orders (demo)')"><svg class="ic"><use href="#i-clipboard"/></svg> Client Orders</div>
         <div class="nav-item" onclick="toast('Client MAR (demo)')"><svg class="ic"><use href="#i-table"/></svg> Client MAR</div>
         <div class="nav-sep"></div>
@@ -1110,6 +1120,9 @@
 
   function showMain(name){
     document.querySelectorAll('.tab1').forEach(t=>t.classList.toggle('active', t.dataset.main===name));
+    document.getElementById('nav-intake').classList.toggle('active', name==='intake');
+    document.getElementById('nav-client').classList.toggle('active', name!=='intake');
+    const content = document.querySelector('.content'); if (content) content.scrollTop = 0;
     document.getElementById('tabs2').style.display = (name==='note') ? '' : 'none';
     document.querySelectorAll('.main-panel').forEach(p=>p.classList.add('hidden'));
     if (name==='note'){

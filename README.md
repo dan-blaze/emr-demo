@@ -44,8 +44,11 @@ Since `index.html` sits at the repo root, the repo can also be published as-is v
 **Top bar** — product logo ("GenericCare"), patient context (`Williams, Katie (2104730)`), alert
 icons, and a staff menu. Most icons are decorative; clickable ones raise a toast.
 
-**Left sidebar** — Client Dashboard, Client Information (active), Medication Management / Rx,
-Client Orders, Client MAR, and SmartLinks.
+**Left sidebar** — Client Dashboard, Client Information (active), Medication Management / Rx with a
+**Patient Intake Information** sub-item under it, Client Orders, Client MAR, and SmartLinks. The
+intake sub-item is wired up: it opens the intake document in the main area (same view as the
+Patient Intake Information tab) and takes the active highlight; switching to any other main tab
+returns the highlight to Client Information. Every other nav item toasts.
 
 **Document header** — "Psychiatric Note" with Effective date, Status, Author dropdown, and a
 **Sign** button.
@@ -68,7 +71,10 @@ scanned/printed form looks in a chart, but as plain HTML: clinic letterhead, a p
 numbered sections (demographics, contact, emergency contacts, employment/guarantor, insurance,
 reason for visit, allergies, medications, medical & surgical history, family history, behavioral
 health history & safety, social history, intake screening scores & vitals, consents), signature
-lines, and per-page footers. It is display-only — no inputs. The action row above it has **Print**
+lines, and per-page footers. It is display-only — no inputs, but all of its text is selectable and
+copyable (explicit `user-select: text`, text cursor, and a highlight color on the pages). Reachable
+from either the tab or the sidebar sub-item under Medication Management / Rx. The action row above
+it has **Print**
 (real `window.print()`, with print styles that drop the app chrome and print just the two pages),
 plus Send to portal and History, which toast.
 
@@ -85,7 +91,9 @@ checkboxes.
 
 Everything real on the page is driven by the inline script at the bottom of the file:
 
-- **Tab switching** — main tabs and Note sub-tabs; unbuilt tabs fall back to a shared placeholder panel.
+- **Tab switching** — main tabs and Note sub-tabs; unbuilt tabs fall back to a shared placeholder
+  panel. Switching a main tab scrolls the content area back to the top and syncs the sidebar
+  highlight between Client Information and the Patient Intake Information sub-item.
 - **PHQ-9 scoring** — click a response per item; the total, `x of 9 answered` counter, and severity
   band update live. Bands: 0–4 minimal, 5–9 mild, 10–14 moderate, 15–19 moderately severe, 20–27
   severe. Answering item 9 (self-harm thoughts) above `Not at all` reveals a safety alert. **Reset**
@@ -111,6 +119,7 @@ Stable IDs are on the fields a demo snippet is most likely to target:
 - **Note → Medical Decision Making** — `complexity`, `assoc`
 - **PHQ-9** — response buttons follow `phq9-q{1-9}-{0-3}` (e.g. `phq9-q4-2`); readouts are
   `phqTotal`, `phqSev`, `phqAnswered`, `phqAlert`, and `phqReset`
+- **Sidebar** — `nav-client`, `nav-intake`
 - **Tabs** — `tab-intake`, `tab-soap`, `tab-service`, `tab-note`, `tab-phq9`, `tab-billing`, `tab-addon`,
   `tab-warnings`; sub-tabs `subtab-general`, `subtab-exam`, `subtab-mdm`, `subtab-aims`,
   `subtab-diagnosis`, `subtab-psychotherapy`
