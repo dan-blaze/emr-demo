@@ -15,8 +15,9 @@ demos or test snippets against, without touching any real system or patient data
 | --- | --- |
 | `index.html` | Main demo page — a psychiatric follow-up note for a depression visit. |
 | `alternative_index.html` | Same page with the patient summary rail swapped to a Type 2 diabetes context (recent labs instead of medications). |
+| `form_filling.html` | A separate product entirely — "Northstar Charting", a blank new-patient encounter form. Different brand, layout, palette and interaction model. |
 
-Both files are standalone: one HTML file each, with inline CSS, inline JavaScript, and inline SVG
+Every file is standalone: one HTML file each, with inline CSS, inline JavaScript, and inline SVG
 icons. No build step, no dependencies, no network requests, no data persistence — reloading the
 page resets everything.
 
@@ -46,19 +47,17 @@ icons, and a staff menu. Most icons are decorative; clickable ones raise a toast
 
 **Left sidebar** — Client Dashboard, Client Information (active by default), Patient Intake
 Information, Medication Management / Rx, Client Orders, Client MAR, SmartLinks, and — below its own
-separator at the bottom, since it belongs to no chart — Patient Form Filling. Three items are wired
-up and switch what the main area shows:
+separator at the bottom — Patient Form Filling, which is a link out to `form_filling.html`, a
+different application altogether. Within this page, two items switch what the main area shows:
 
 | Nav item | Shows |
 | --- | --- |
 | Client Information | The tabbed Psychiatric Note — SOAP, Service, Note, PHQ-9, Billing Diagnosis, Add-On Codes, Warnings |
 | Patient Intake Information | The completed intake form — filled in with the open chart's record |
-| Patient Form Filling | A blank encounter form for a new patient — nothing pre-filled |
 
-Both form sections replace the note entirely: the tab strip and note toolbar are hidden and the
-document title changes. Patient Form Filling also hides the right-hand patient rail, because it is
-not tied to the chart in the banner. Returning to Client Information restores the note tab that was
-open before, along with the tab strip, toolbar, rail, and title. Every other nav item toasts.
+The intake section replaces the note entirely: the tab strip and note toolbar are hidden and the
+document title changes. Returning to Client Information restores the note tab that was open before,
+along with the tab strip, toolbar, and title. Every other nav item toasts.
 
 **Document header** — "Psychiatric Note" with Effective date, Status, Author dropdown, and a
 **Sign** button. In either sidebar form section the title changes to that section's name and this
@@ -91,22 +90,6 @@ clicked into, selected, copied, and edited like any other field on the page. Rep
 **Add** link that toasts. The action row above the form has Save and History (toast) and **Print**
 (real `window.print()`, with print styles that drop the app chrome).
 
-**Patient Form Filling** — the bottom sidebar section: a blank, standard EMR encounter form for a
-**new** patient. It is deliberately not attached to the chart in the banner — the patient's name,
-DOB, sex, MRN, contact details, payer and emergency contact are all entered on the form itself,
-and the patient summary rail is hidden while it is open. Twelve numbered sections — patient
-information, encounter details, chief complaint & HPI, vitals & measurements, allergies & current
-medications, review of systems, objective/examination, assessment & diagnoses,
-plan/orders/prescriptions, follow-up, billing & coding, attestation & signature — built from empty
-inputs with placeholder hints, `— Select —` dropdowns, unchecked boxes, and empty repeating rows
-for allergies, medications, diagnoses and prescriptions. Required fields are marked with a red
-asterisk.
-
-Three things actually work: **BMI** calculates itself from the height and weight fields as you
-type, **Clear form** (top bar and footer) empties every field and resets every dropdown and
-checkbox, and **Print** prints the form. Save draft and Sign & close toast. Nothing persists —
-reloading resets the form.
-
 **Note sub-tabs** — General and Medical Decision Making are built out; Exam, AIMS, Diagnosis, and
 Psychotherapy are placeholders. General is pre-filled with a sample depression follow-up
 (chief complaint, HPI, medications, MSE, assessment, plan). Medical Decision Making has a problem
@@ -120,12 +103,9 @@ checkboxes.
 
 Everything real on the page is driven by the inline script at the bottom of the file:
 
-- **Section switching** — `showSection('intake' | 'form' | 'client')`, driven by the three live
-  sidebar items and the `SECTIONS` map. A form section hides the tab strip and note toolbar and
-  retitles the document header; going back calls `showMain(currentMain)` to restore the tab that
-  was open.
-- **Form filling** — live BMI from height + weight, and Clear form resets every input, select and
-  checkbox in that panel. The section also hides `#rail`, restored when leaving.
+- **Section switching** — `showSection('intake' | 'client')`, driven by the two live sidebar items
+  and the `SECTIONS` map. The intake section hides the tab strip and note toolbar and retitles the
+  document header; going back calls `showMain(currentMain)` to restore the tab that was open.
 - **Tab switching** — main tabs and Note sub-tabs; unbuilt tabs fall back to a shared placeholder
   panel. Switching a main tab scrolls the content area back to the top.
 - **PHQ-9 scoring** — click a response per item; the total, `x of 9 answered` counter, and severity
@@ -150,26 +130,6 @@ Stable IDs are on the fields a demo snippet is most likely to target:
   `intake-bp`, `intake-hr`, `intake-rr`, `intake-temp`, `intake-ht`, `intake-wt`, `intake-bmi`;
   row-group and checkbox-group wrappers `intake-emergency`, `intake-allergies`, `intake-meds`,
   `intake-family`, `intake-conditions`, `intake-consents`
-- **Patient Form Filling** — all controls, all empty. Patient identity (entered per form, not
-  inherited from the chart): `form-last-name`, `form-first-name`, `form-middle-name`,
-  `form-preferred-name`, `form-dob`, `form-age`, `form-sex`, `form-gender`, `form-pronouns`,
-  `form-mrn`, `form-account`, `form-marital`, `form-language`, `form-need-interpreter`,
-  `form-phone`, `form-email`, `form-address`, `form-city`, `form-state`, `form-zip`, `form-payer`,
-  `form-member-id`, `form-emergency-name`, `form-emergency-phone`. Encounter:
-  `form-dos`, `form-time-in`, `form-time-out`,
-  `form-visit-type`, `form-location`, `form-provider`, `form-supervising`, `form-referral`,
-  `form-interpreter`, `form-reason`, `form-cc`, `form-onset`, `form-duration`, `form-severity`,
-  `form-context`, `form-hpi`, `form-pmh`, `form-bp-sys`, `form-bp-dia`, `form-bp-pos`, `form-hr`,
-  `form-rr`, `form-temp`, `form-temp-route`, `form-spo2`, `form-pain`, `form-ht-ft`, `form-ht-in`,
-  `form-wt`, `form-bmi` (read-only, auto-calculated), `form-vitals-by`, `form-nkda`,
-  `form-meds-reviewed`, `form-ros-negative`, `form-ros-notes`, `form-exam-general`,
-  `form-exam-orientation`, `form-exam-type`, `form-exam`, `form-mse`, `form-assessment`,
-  `form-plan`, `form-referrals`, `form-order-priority`, `form-instructions`, `form-followup`,
-  `form-followup-date`, `form-appt-scheduled`, `form-precautions`, `form-cpt`, `form-modifiers`,
-  `form-units`, `form-time-spent`, `form-coding-basis`, `form-pos`, `form-addon-codes`,
-  `form-prior-auth`, `form-attest`, `form-signer`, `form-credentials`, `form-sign-date`;
-  row/checkbox groups `form-allergies`, `form-medications`, `form-ros`, `form-diagnoses`,
-  `form-rx`, `form-orders`; buttons `formClear`, `formClear2`
 - **SOAP tab** — `soap-hpi`, `soap-ros`, `soap-pe`, `soap-ap`, `soap-goals`
 - **Note → General** — `cc`, `hpi`, `meds`, `mse`, `assess`, `plan`
 - **Note → Medical Decision Making** — `complexity`, `assoc`
@@ -182,6 +142,64 @@ Stable IDs are on the fields a demo snippet is most likely to target:
 - **Right rail** — `rail-dx`, `rail-age`, `rail-bp`, `rail-hr`, `rail-rr`, `rail-temp`, `rail-wt`,
   `rail-bmi`, `rail-med`
 
+## The form filling page (`form_filling.html`)
+
+A deliberately different product: **Northstar Charting**, a blank new-patient encounter form. It
+shares no styling, markup or script with the EMR page — indigo on off-white instead of clinical
+blue, rounded cards instead of dense panels, a sticky step rail instead of tabs, pill buttons,
+chip toggles and a segmented control instead of checkboxes and radios. Reached from the Patient
+Form Filling item at the bottom of the EMR's sidebar; "Back to chart" in its header returns to
+`index.html`.
+
+**Layout** — a sticky top bar (brand, breadcrumb, unsaved-draft indicator, back link, submit), a
+left step rail listing the eight sections, the form itself as one card per section, and a fixed
+bottom dock with progress and actions.
+
+**Sections** — 1 Patient (identity, contact, coverage, emergency contact) · 2 Encounter · 3 Vitals ·
+4 History (complaint, HPI, allergy rows, medication rows) · 5 Review of systems · 6 Exam &
+assessment (with diagnosis rows) · 7 Plan (prescriptions, orders, follow-up) · 8 Billing &
+signature. Everything starts empty; 12 fields are required and marked with a red asterisk.
+
+**Behavior**
+
+- **Progress** — the meter and dock show the percentage of required fields complete, the count of
+  filled fields overall, and how many required fields are left; all live.
+- **Step rail** — click to jump to a section; an `IntersectionObserver` highlights the section you
+  are reading, and any section with data entered gets a green marker.
+- **BMI** — calculated from height and weight as you type.
+- **Submit** — validates the required fields. Missing ones get a red banner naming each one plus
+  red highlights on the fields themselves, cleared as you fill them; a complete form shows a green
+  confirmation. Nothing is actually saved.
+- **Clear form**, **Print**, and **Save draft** behave as labelled (Save draft toasts).
+
+**Element IDs for automation** — the same `form-*` naming as before, all controls empty on load.
+
+- **Patient** (entered per form, never inherited from a chart) — `form-last-name`,
+  `form-first-name`, `form-middle-name`, `form-preferred-name`, `form-dob`, `form-age`,
+  `form-sex` (segmented radio group), `form-gender`, `form-pronouns`, `form-marital`,
+  `form-language`, `form-mrn`, `form-account`, `form-need-interpreter`, `form-phone`,
+  `form-email`, `form-address`, `form-city`, `form-state`, `form-zip`, `form-payer`,
+  `form-member-id`, `form-emergency-name`, `form-emergency-phone`
+- **Encounter** — `form-dos`, `form-time-in`, `form-time-out`, `form-visit-type`, `form-location`,
+  `form-provider`, `form-supervising`, `form-referral`, `form-interpreter`, `form-reason`
+- **Vitals** — `form-bp-sys`, `form-bp-dia`, `form-bp-pos`, `form-hr`, `form-rr`, `form-spo2`,
+  `form-temp`, `form-temp-route`, `form-pain`, `form-ht-ft`, `form-ht-in`, `form-wt`,
+  `form-bmi` (read-only, auto-calculated), `form-vitals-by`
+- **History** — `form-cc`, `form-onset`, `form-duration`, `form-severity`, `form-context`,
+  `form-hpi`, `form-pmh`, `form-nkda`, `form-meds-reviewed`
+- **Review of systems** — `form-ros-negative`, `form-ros-notes`
+- **Exam & assessment** — `form-exam-general`, `form-exam-orientation`, `form-exam-type`,
+  `form-exam`, `form-mse`, `form-assessment`
+- **Plan** — `form-plan`, `form-referrals`, `form-order-priority`, `form-instructions`,
+  `form-followup`, `form-followup-date`, `form-appt-scheduled`, `form-precautions`
+- **Billing & signature** — `form-cpt`, `form-modifiers`, `form-units`, `form-time-spent`,
+  `form-coding-basis`, `form-pos`, `form-addon-codes`, `form-prior-auth`, `form-attest`,
+  `form-signer`, `form-credentials`, `form-sign-date`
+- **Groups and chrome** — row groups `form-allergies`, `form-medications`, `form-diagnoses`,
+  `form-rx`; chip groups `form-ros`, `form-orders`; readouts `pct`, `bar`, `filled`, `total`,
+  `reqLeft`, `reqCount`, `reqTotal`, `dockPct`, `dockReq`; banners `errBanner`, `errText`,
+  `okBanner`; button `clearBtn`
+
 ## Editing
 
 Each page is a single file laid out in the same order: `:root` CSS variables (colors, borders,
@@ -191,10 +209,15 @@ variables at the top; to add a tab, add a `.tab1` with a `data-main` value plus 
 standalone sidebar section, add a `.nav-item` calling `showSection('…')`, a matching
 `.main-panel[data-main="…"]`, and an entry in the `SECTIONS` map.
 
+`form_filling.html` shares nothing with the other two — its own palette, type scale, components and
+script — so edit it on its own terms. Its layout is a sticky step rail plus one `.card` per section;
+to add a section, add a `.card` with an `id`, a matching `.step` button with `data-target="…"`, and
+the scroll-spy and progress meter pick it up automatically.
+
 Keep the two files in sync when changing shared structure — they currently differ only in the
 `<title>`, the right-rail diagnosis, and the rail's medications-vs-labs section. The Patient Intake
-Information and Patient Form Filling sections are identical in both files, so edits to them belong
-in both.
+Information section is identical in both files, so edits to it belong in both. `form_filling.html`
+is independent of both.
 
 ## Disclaimer
 
