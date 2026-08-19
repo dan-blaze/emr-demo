@@ -69,6 +69,12 @@
   .nav-item.active .ic { color:#fff; }
   a.nav-item { text-decoration:none; }
   .nav-sep { height:1px; background:rgba(255,255,255,0.10); margin:8px 14px; }
+  .nav-bottom { margin-top:auto; padding:8px 0 10px; border-top:1px solid rgba(255,255,255,0.12);
+                background:rgba(0,0,0,0.10); }
+  .nav-new span { flex:1 1 auto; }
+  .nav-new .plus { width:18px; height:18px; padding:3px; border-radius:50%; color:#fff;
+                   background:rgba(255,255,255,0.16); flex:0 0 auto; }
+  .nav-new:hover .plus { background:var(--accent); }
 
   /* ===== Main ===== */
   .main { flex:1 1 auto; display:flex; flex-direction:column; min-width:0; background:var(--page-bg); }
@@ -393,8 +399,15 @@
         <div class="nav-item" onclick="toast('Client MAR (demo)')"><svg class="ic"><use href="#i-table"/></svg> Client MAR</div>
         <div class="nav-sep"></div>
         <div class="nav-item" onclick="toast('SmartLinks (demo)')"><svg class="ic"><use href="#i-link"/></svg> SmartLinks</div>
-        <div class="nav-sep"></div>
-        <a class="nav-item" id="nav-form" href="form_filling.html" title="Opens the standalone new-encounter form"><svg class="ic"><use href="#i-list"/></svg> Patient Form Filling</a>
+      </div>
+
+      <!-- pinned to the bottom of the sidebar: opens the standalone new-encounter form -->
+      <div class="nav-bottom">
+        <a class="nav-item nav-new" id="nav-form" href="form_filling.html" title="Start a new encounter form">
+          <svg class="ic"><use href="#i-list"/></svg>
+          <span>Patient Form Filling</span>
+          <svg class="ic plus"><use href="#i-plus"/></svg>
+        </a>
       </div>
     </nav>
 

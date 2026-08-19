@@ -46,9 +46,10 @@ Since `index.html` sits at the repo root, the repo can also be published as-is v
 icons, and a staff menu. Most icons are decorative; clickable ones raise a toast.
 
 **Left sidebar** — Client Dashboard, Client Information (active by default), Patient Intake
-Information, Medication Management / Rx, Client Orders, Client MAR, SmartLinks, and — below its own
-separator at the bottom — Patient Form Filling, which is a link out to `form_filling.html`, a
-different application altogether. Within this page, two items switch what the main area shows:
+Information, Medication Management / Rx, Client Orders, Client MAR, and
+SmartLinks. Pinned to the very bottom of the sidebar, on its own darker strip with a **+** badge,
+sits Patient Form Filling — a link out to `form_filling.html`, a different application altogether.
+Within this page, two items switch what the main area shows:
 
 | Nav item | Shows |
 | --- | --- |
