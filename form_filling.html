@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>GenericCare &mdash; New Patient Encounter (Mock)</title>
+<style>
+  :root{
+    /* same GenericCare palette as the chart page */
+    --ink:#274a72; --body:#33404d; --muted:#7e8a96; --faint:#98a3ae;
+    --accent:#2f6fa8; --accent-dark:#255c8c; --accent-deep:#1f4d77;
+    --accent-soft:#eaf2fa; --accent-line:#dce8f4; --accent-bright:#3b8ed0;
+    --ok:#2e8b60; --ok-soft:#e8f4ee; --ok-line:#bfe0cd;
+    --warn:#c08616; --err:#cf4032; --err-soft:#fdecea; --err-line:#f2bcb6;
+    --bg:#eef2f6; --card:#ffffff; --line:#c4d0db; --line-soft:#dde4ec; --field:#ffffff;
+    --section-bg:#d8e6f3; --section-text:#1f4d77; --titlebar-a:#eef3f9; --titlebar-b:#dde7f2;
+    --r-lg:6px; --r-md:5px; --r-sm:3px;
+    --shadow:0 1px 3px rgba(40,70,90,.10);
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg); color:var(--body); font-family:var(--font); font-size:13px; line-height:1.5;
+       -webkit-font-smoothing:antialiased}
+  a{color:var(--accent); text-decoration:none}
+  a:hover{text-decoration:underline}
+  .ic{width:16px;height:16px;display:inline-block;vertical-align:middle;flex:0 0 auto}
+
+  /* ---------- top bar: same chrome as the chart page ---------- */
+  .top{position:sticky; top:0; z-index:40; background:#fff; border-bottom:1px solid var(--line);
+       display:flex; align-items:center; gap:14px; padding:0 14px; height:46px; color:#2c4a6e}
+  .brand{display:flex; align-items:center; gap:7px; font-size:17px; font-weight:600; color:#274a72; letter-spacing:.2px}
+  .brand .mark{width:22px;height:22px;border-radius:5px;background:linear-gradient(135deg,var(--accent-bright),var(--accent-dark));
+               display:grid;place-items:center;color:#fff}
+  .brand .mark .ic{width:14px;height:14px}
+  .top .sep{width:1px;height:24px;background:var(--line-soft)}
+  .crumb{font-size:13px;color:var(--muted)}
+  .crumb b{color:#274a72;font-weight:600}
+  .top .grow{flex:1}
+  .top .save-state{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .top .save-state .dot{width:7px;height:7px;border-radius:50%;background:var(--warn)}
+
+  .btn{font-family:var(--font); font-size:13px; font-weight:600; border-radius:var(--r-sm); padding:6px 16px;
+       cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--accent-deep);
+       display:inline-flex; align-items:center; gap:7px; transition:.12s}
+  .btn-ghost:hover{background:var(--accent-soft); border-color:var(--accent)}
+  .btn-primary{background:var(--accent); border-color:var(--accent-dark); color:#fff}
+  .btn-primary:hover{background:var(--accent-dark)}
+  .btn-quiet{background:none; border:none; color:var(--accent); font-weight:400; text-decoration:underline; padding:6px 8px}
+  .btn-quiet:hover{color:var(--err)}
+
+  /* ---------- shell: step rail + stacked section cards ---------- */
+  .shell{max-width:1180px; margin:0 auto; padding:18px 18px 96px; display:grid;
+         grid-template-columns:228px minmax(0,1fr); gap:22px; align-items:start}
+  @media (max-width:1000px){ .shell{grid-template-columns:1fr} .rail{display:none} }
+
+  .rail{position:sticky; top:64px; background:var(--card); border:1px solid var(--line-soft);
+        border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden}
+  .rail h2{font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--section-text); font-weight:700;
+           margin:0; padding:9px 14px; background:linear-gradient(180deg,var(--titlebar-a),var(--titlebar-b));
+           border-bottom:1px solid var(--line-soft)}
+  .step{display:flex; gap:10px; align-items:flex-start; padding:8px 14px; cursor:pointer; color:var(--body);
+        background:none; border:none; border-left:3px solid transparent; width:100%; text-align:left; font-family:var(--font)}
+  .step:hover{background:#f4f7fa}
+  .step .n{width:21px;height:21px;border-radius:50%;background:var(--accent-line);color:var(--accent-deep);
+           font-size:11px;font-weight:700;display:grid;place-items:center;flex:0 0 auto}
+  .step .t{font-size:12.5px;line-height:1.3}
+  .step .t small{display:block;font-size:11px;color:var(--muted)}
+  .step.active{background:var(--accent-soft); border-left-color:var(--accent); color:var(--accent-deep); font-weight:600}
+  .step.active .n{background:var(--accent); color:#fff}
+  .step.done .n{background:var(--ok-soft); color:var(--ok)}
+  .rail-done{padding:9px 14px; border-top:1px solid var(--line-soft); font-size:11.5px; color:var(--muted)}
+  .rail-done b{color:var(--ink)}
+
+  /* ---------- page head + progress ---------- */
+  .hero{background:var(--card); border:1px solid var(--line-soft); border-radius:var(--r-lg); box-shadow:var(--shadow);
+        padding:16px 18px; margin-bottom:16px}
+  .hero .eyebrow{font-size:10.5px; text-transform:uppercase; letter-spacing:.7px; color:var(--muted); font-weight:700}
+  .hero h1{font-size:20px; color:var(--ink); margin:4px 0 5px; font-weight:600}
+  .hero p{margin:0; color:var(--muted); font-size:12.5px; max-width:78ch}
+  .meter{margin-top:14px; padding-top:13px; border-top:1px solid var(--line-soft);
+         display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .meter .bar{flex:1 1 220px; height:7px; border-radius:99px; background:#e4ebf2; overflow:hidden; min-width:150px}
+  .meter .bar i{display:block; height:100%; width:0; border-radius:99px;
+                background:linear-gradient(90deg,var(--accent),var(--accent-bright)); transition:width .3s}
+  .meter .pct{font-size:20px; font-weight:700; color:var(--ink); min-width:48px}
+  .meter .lbl{font-size:12px; color:var(--muted)}
+  .meter .lbl b{color:var(--body); font-weight:600}
+
+  /* ---------- section cards ---------- */
+  .card{background:var(--card); border:1px solid var(--line-soft); border-radius:var(--r-lg); box-shadow:var(--shadow);
+        margin-bottom:16px; scroll-margin-top:60px; overflow:hidden}
+  .card > header{display:flex; align-items:center; gap:11px; padding:9px 16px;
+                 background:linear-gradient(180deg,var(--titlebar-a),var(--titlebar-b));
+                 border-bottom:1px solid var(--line-soft)}
+  .card .badge{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
+               font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:0 0 auto}
+  .card h3{font-size:14px; color:var(--ink); margin:0; font-weight:600}
+  .card header p{margin:1px 0 0; font-size:11.5px; color:var(--muted)}
+  .card .body{padding:16px 18px 20px}
+
+  .grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px 16px}
+  .grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid .w2{grid-column:span 2}
+  .grid .w3{grid-column:1/-1}
+  .grid + .grid{margin-top:14px}
+  @media (max-width:760px){ .grid,.grid.g2{grid-template-columns:1fr} .grid .w2,.grid .w3{grid-column:auto} }
+
+  .f{display:flex; flex-direction:column; gap:5px; min-width:0}
+  .f label{font-size:12px; color:var(--body)}
+  .f label em{color:var(--err); font-style:normal; margin-left:2px}
+  .in{font-family:var(--font); font-size:12.5px; color:var(--body); background:var(--field);
+      border:1px solid var(--line); border-radius:var(--r-sm); padding:6px 9px; width:100%; min-width:0; transition:.12s}
+  .in::placeholder{color:#a9b3bd}
+  .in:hover{border-color:#a9bccd}
+  .in:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 2px rgba(47,111,168,.15)}
+  select.in{appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237e8a96' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+            background-repeat:no-repeat; background-position:right 8px center; background-size:15px; padding-right:30px}
+  textarea.in{resize:vertical; min-height:74px; line-height:1.55}
+  .in[readonly]{background:#f2f5f8; color:var(--muted)}
+  .in.missing{border-color:var(--err); background:var(--err-soft)}
+  .f .hint{font-size:11px; color:var(--muted)}
+
+  /* segmented control */
+  .seg{display:inline-flex; align-self:flex-start; border:1px solid var(--line); border-radius:var(--r-sm);
+       overflow:hidden; flex-wrap:wrap; background:#fff}
+  .seg label{position:relative; cursor:pointer}
+  .seg label + label{border-left:1px solid var(--line-soft)}
+  .seg input{position:absolute; opacity:0; inset:0; margin:0; cursor:pointer}
+  .seg span{display:block; padding:6px 14px; font-size:12px; color:var(--muted); white-space:nowrap}
+  .seg label:hover span{background:var(--accent-soft); color:var(--accent-deep)}
+  .seg input:checked + span{background:var(--accent); color:#fff; font-weight:600}
+  .seg.missing{box-shadow:0 0 0 2px rgba(207,64,50,.25); border-color:var(--err)}
+
+  /* chips */
+  .chips{display:flex; flex-wrap:wrap; gap:7px}
+  .chip{position:relative; cursor:pointer}
+  .chip input{position:absolute; opacity:0; inset:0; margin:0; cursor:pointer}
+  .chip span{display:inline-flex; align-items:center; gap:7px; padding:6px 12px; border-radius:4px; font-size:12.5px;
+             border:1px solid var(--line); background:#fff; color:var(--body); transition:.12s}
+  .chip span::before{content:""; width:13px; height:13px; border-radius:2px; border:1px solid #b6c2cd; flex:0 0 auto; background:#fff}
+  .chip:hover span{border-color:var(--accent); color:var(--accent-deep)}
+  .chip input:checked + span{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-deep); font-weight:600}
+  .chip input:checked + span::before{background:var(--accent); border-color:var(--accent-dark);
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.6'><path d='M5 12.5l5 5 9-10'/></svg>");
+    background-size:10px; background-repeat:no-repeat; background-position:center}
+
+  /* repeating rows */
+  .rows{border:1px solid var(--line-soft); border-radius:var(--r-md); overflow:hidden}
+  .rows .rhead,.rows .r{display:grid; gap:8px; padding:7px 10px; align-items:center}
+  .rows .rhead{background:#f4f7fa; border-bottom:1px solid var(--line); font-size:10px; text-transform:uppercase;
+               letter-spacing:.5px; color:var(--muted); font-weight:700}
+  .rows .r + .r{border-top:1px solid var(--line-soft)}
+  .rows .r:nth-child(even){background:#fbfcfe}
+  .rows .in{padding:5px 8px; font-size:12.5px}
+  @media (max-width:760px){ .rows .rhead{display:none} .rows .r{grid-template-columns:1fr !important} }
+  .addrow{margin-top:8px; font-size:12.5px; color:var(--accent); background:none; border:none; padding:2px 0;
+          cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-family:var(--font)}
+  .addrow:hover{color:var(--accent-dark); text-decoration:underline}
+  .sublabel{font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); font-weight:700;
+            margin:18px 0 8px}
+  .sublabel:first-child{margin-top:0}
+
+  .callout{display:flex; gap:9px; align-items:flex-start; background:var(--accent-soft); border:1px solid var(--accent-line);
+           color:var(--accent-deep); border-radius:var(--r-md); padding:9px 12px; font-size:12px; margin-bottom:16px}
+  .callout .ic{color:var(--accent); margin-top:1px}
+  .callout b{font-weight:700}
+  .banner{display:none; gap:9px; align-items:flex-start; border-radius:var(--r-md); padding:10px 13px; font-size:12.5px;
+          margin-bottom:16px}
+  .banner.show{display:flex}
+  .banner.err{background:var(--err-soft); border:1px solid var(--err-line); color:#a5281b}
+  .banner.err .ic{color:var(--err)}
+  .banner.ok{background:var(--ok-soft); border:1px solid var(--ok-line); color:#1c6b4c}
+  .banner.ok .ic{color:var(--ok)}
+
+  .attest{display:flex; gap:9px; align-items:flex-start; font-size:12.5px; color:var(--body); cursor:pointer;
+          background:#f6f9fc; border:1px solid var(--line-soft); border-radius:var(--r-md); padding:10px 12px; margin-bottom:9px}
+  .attest.missing{border-color:var(--err); background:var(--err-soft)}
+  .attest input{margin:2px 0 0; accent-color:var(--accent); width:15px; height:15px; flex:0 0 auto}
+
+  /* sticky action dock */
+  .dock{position:fixed; left:0; right:0; bottom:0; z-index:45; background:#fff; border-top:1px solid var(--line);
+        padding:9px 18px; box-shadow:0 -2px 8px rgba(40,70,90,.08)}
+  .dock .inner{max-width:1180px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
+  .dock .status{font-size:12px; color:var(--muted)}
+  .dock .status b{color:var(--ink); font-weight:700}
+  .dock .grow{flex:1}
+
+  .foot{max-width:1180px; margin:0 auto; padding:0 18px 22px; font-size:11px; color:var(--muted); text-align:center}
+
+  .toast{position:fixed; left:50%; bottom:64px; transform:translateX(-50%) translateY(16px); z-index:60;
+         background:#26384a; color:#fff; font-size:12.5px; padding:10px 17px; border-radius:6px;
+         box-shadow:0 8px 30px rgba(0,0,0,.25); opacity:0; transition:opacity .2s, transform .2s; pointer-events:none}
+  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+
+  @media print{
+    .top,.rail,.dock,.toast,.addrow{display:none !important}
+    body{background:#fff}
+    .shell{display:block; padding:0; max-width:none}
+    .card{box-shadow:none; page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="p-cross" viewBox="0 0 24 24"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" fill="currentColor"/></symbol>
+  <symbol id="p-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="p-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.2M12 7.5v.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
+  <symbol id="p-check" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5 10-11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="p-warn" viewBox="0 0 24 24"><path d="M12 4l8.5 15h-17z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 9.5v4.4M12 16.7v.3" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/></symbol>
+  <symbol id="p-back" viewBox="0 0 24 24"><path d="M14 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="p-print" viewBox="0 0 24 24"><path d="M7 8V4h10v4" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="4" y="8" width="16" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M7 14h10v6H7z" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="brand"><span class="mark"><svg class="ic"><use href="#p-cross"/></svg></span>GenericCare</div>
+  <div class="sep"></div>
+  <div class="crumb">Client Records &rsaquo; <b>New Patient Encounter</b></div>
+  <div class="grow"></div>
+  <div class="save-state"><span class="dot"></span>Unsaved draft</div>
+  <a class="btn btn-ghost" href="index.html"><svg class="ic"><use href="#p-back"/></svg>Back to chart</a>
+  <button class="btn btn-primary" onclick="submitForm()">Submit encounter</button>
+</header>
+
+<div class="shell">
+
+  <aside class="rail">
+    <h2>Sections</h2>
+    <button class="step active" data-target="s-patient"><span class="n">1</span><span class="t">Patient<small>Who is being seen</small></span></button>
+    <button class="step" data-target="s-encounter"><span class="n">2</span><span class="t">Encounter<small>Visit and provider</small></span></button>
+    <button class="step" data-target="s-vitals"><span class="n">3</span><span class="t">Vitals<small>Measurements</small></span></button>
+    <button class="step" data-target="s-history"><span class="n">4</span><span class="t">History<small>Complaint, allergies, meds</small></span></button>
+    <button class="step" data-target="s-ros"><span class="n">5</span><span class="t">Review of systems<small>Positive findings</small></span></button>
+    <button class="step" data-target="s-exam"><span class="n">6</span><span class="t">Exam &amp; assessment<small>Findings and diagnoses</small></span></button>
+    <button class="step" data-target="s-plan"><span class="n">7</span><span class="t">Plan<small>Orders and follow-up</small></span></button>
+    <button class="step" data-target="s-billing"><span class="n">8</span><span class="t">Billing &amp; sign<small>Codes and signature</small></span></button>
+    <div class="rail-done"><b id="reqCount">0</b> of <span id="reqTotal">0</span> required fields complete</div>
+  </aside>
+
+  <div class="pages">
+
+    <div class="hero">
+      <div class="eyebrow">Encounter intake</div>
+      <h1>New patient encounter</h1>
+      <p>Start a fresh clinical record. This form is not linked to any existing chart &mdash; enter the patient&rsquo;s details, the visit, and your documentation, then submit.</p>
+      <div class="meter">
+        <div class="pct" id="pct">0%</div>
+        <div class="bar"><i id="bar"></i></div>
+        <div class="lbl"><b id="filled">0</b> of <span id="total">0</span> fields filled &middot; <b id="reqLeft">0</b> required remaining</div>
+      </div>
+    </div>
+
+    <div class="banner err" id="errBanner"><svg class="ic"><use href="#p-warn"/></svg><span><b>Not ready to submit.</b> <span id="errText"></span></span></div>
+    <div class="banner ok" id="okBanner"><svg class="ic"><use href="#p-check"/></svg><span><b>Encounter submitted.</b> In a real system this would be filed to the chart and queued for coding. Nothing was saved &mdash; this is a mock.</span></div>
+
+    <section class="card" id="s-patient">
+      <header>
+        <div class="badge">1</div>
+        <div><h3>Patient</h3><p>Identity, contact details and coverage for the person being seen.</p></div>
+      </header>
+      <div class="body">
+      <div class="callout"><svg class="ic"><use href="#p-info"/></svg><span><b>New patient record.</b> Nothing here is pre-filled from another chart. Required fields are marked with an asterisk.</span></div>
+      <div class="grid">
+      <div class="f">
+        <label for="form-last-name">Last name<em>*</em></label>
+        <input class="in" id="form-last-name" placeholder="Last name" data-req="1" />
+      </div>
+      <div class="f">
+        <label for="form-first-name">First name<em>*</em></label>
+        <input class="in" id="form-first-name" placeholder="First name" data-req="1" />
+      </div>
+      <div class="f">
+        <label for="form-middle-name">Middle name</label>
+        <input class="in" id="form-middle-name" placeholder="Middle name or initial" />
+      </div>
+      <div class="f">
+        <label for="form-preferred-name">Preferred name</label>
+        <input class="in" id="form-preferred-name" placeholder="Goes by" />
+      </div>
+      <div class="f">
+        <label for="form-dob">Date of birth<em>*</em></label>
+        <input class="in" id="form-dob" placeholder="MM/DD/YYYY" data-req="1" />
+      </div>
+      <div class="f">
+        <label for="form-age">Age</label>
+        <input class="in" id="form-age" placeholder="Years" />
+      </div>
+      </div>
+      <div class="grid">
+      <div class="f w2">
+        <label>Sex assigned at birth<em>*</em></label>
+        <div class="seg" id="form-sex" data-req="1">
+          <label><input type="radio" name="form-sex" value="Female" /><span>Female</span></label>
+          <label><input type="radio" name="form-sex" value="Male" /><span>Male</span></label>
+          <label><input type="radio" name="form-sex" value="Intersex" /><span>Intersex</span></label>
+          <label><input type="radio" name="form-sex" value="Declined" /><span>Declined</span></label>
+        </div>
+      </div>
+      <div class="f">
+        <label for="form-pronouns">Pronouns</label>
+        <select class="in" id="form-pronouns">
+          <option value="">Select&hellip;</option>
+          <option>she / her</option>
+          <option>he / him</option>
+          <option>they / them</option>
+          <option>Declined</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-gender">Gender identity</label>
+        <select class="in" id="form-gender">
+          <option value="">Select&hellip;</option>
+          <option>Female</option>
+          <option>Male</option>
+          <option>Non-binary</option>
+          <option>Transgender female</option>
+          <option>Transgender male</option>
+          <option>Declined</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-marital">Marital status</label>
+        <select class="in" id="form-marital">
+          <option value="">Select&hellip;</option>
+          <option>Single</option>
+          <option>Married</option>
+          <option>Divorced</option>
+          <option>Separated</option>
+          <option>Widowed</option>
+          <option>Partnered</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-language">Preferred language</label>
+        <input class="in" id="form-language" placeholder="e.g. English" />
+      </div>
+      <div class="f">
+        <label for="form-mrn">MRN</label>
+        <input class="in" id="form-mrn" placeholder="Leave blank to assign on save" />
+      </div>
+      <div class="f">
+        <label for="form-account">Account number</label>
+        <input class="in" id="form-account" placeholder="Assigned on save" />
+      </div>
+      <div class="f">
+        <label for="form-need-interpreter">Interpreter needed</label>
+        <select class="in" id="form-need-interpreter">
+          <option value="">Select&hellip;</option>
+          <option>No</option>
+          <option>Yes</option>
+        </select>
+      </div>
+      </div>
+      <div class="sublabel">Contact &amp; coverage</div>
+      <div class="grid">
+      <div class="f">
+        <label for="form-phone">Mobile phone<em>*</em></label>
+        <input class="in" id="form-phone" placeholder="(___) ___-____" data-req="1" />
+      </div>
+      <div class="f">
+        <label for="form-email">Email</label>
+        <input class="in" id="form-email" placeholder="name@example.com" />
+      </div>
+      <div class="f">
+        <label for="form-address">Street address</label>
+        <input class="in" id="form-address" placeholder="Street, apartment or unit" />
+      </div>
+      <div class="f">
+        <label for="form-city">City</label>
+        <input class="in" id="form-city" placeholder="City" />
+      </div>
+      <div class="f">
+        <label for="form-state">State</label>
+        <input class="in" id="form-state" placeholder="State" />
+      </div>
+      <div class="f">
+        <label for="form-zip">ZIP code</label>
+        <input class="in" id="form-zip" placeholder="ZIP" />
+      </div>
+      <div class="f">
+        <label for="form-payer">Primary payer</label>
+        <input class="in" id="form-payer" placeholder="Insurance plan" />
+      </div>
+      <div class="f">
+        <label for="form-member-id">Member ID</label>
+        <input class="in" id="form-member-id" placeholder="Policy or member number" />
+      </div>
+      <div class="f">
+        <label for="form-emergency-name">Emergency contact</label>
+        <input class="in" id="form-emergency-name" placeholder="Name and relationship" />
+      </div>
+      <div class="f">
+        <label for="form-emergency-phone">Emergency contact phone</label>
+        <input class="in" id="form-emergency-phone" placeholder="(___) ___-____" />
+      </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="card" id="s-encounter">
+      <header>
+        <div class="badge">2</div>
+        <div><h3>Encounter</h3><p>When the visit happened, where, and who saw the patient.</p></div>
+      </header>
+      <div class="body">
+      <div class="grid">
+      <div class="f">
+        <label for="form-dos">Date of service<em>*</em></label>
+        <input class="in" id="form-dos" placeholder="MM/DD/YYYY" data-req="1" />
+      </div>
+      <div class="f">
+        <label for="form-time-in">Time in</label>
+        <input class="in" id="form-time-in" placeholder="hh:mm" />
+      </div>
+      <div class="f">
+        <label for="form-time-out">Time out</label>
+        <input class="in" id="form-time-out" placeholder="hh:mm" />
+      </div>
+      <div class="f">
+        <label for="form-visit-type">Visit type<em>*</em></label>
+        <select class="in" id="form-visit-type" data-req="1">
+          <option value="">Select&hellip;</option>
+          <option>Office visit &mdash; new patient</option>
+          <option>Office visit &mdash; established patient</option>
+          <option>Annual wellness visit</option>
+          <option>Follow-up</option>
+          <option>Medication management</option>
+          <option>Telehealth &mdash; video</option>
+          <option>Telehealth &mdash; audio only</option>
+          <option>Urgent / walk-in</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-location">Location</label>
+        <select class="in" id="form-location">
+          <option value="">Select&hellip;</option>
+          <option>Main clinic</option>
+          <option>North satellite office</option>
+          <option>Telehealth</option>
+          <option>Home visit</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-provider">Rendering provider<em>*</em></label>
+        <select class="in" id="form-provider" data-req="1">
+          <option value="">Select&hellip;</option>
+          <option>Reyes, A., MD</option>
+          <option>Chen, L., PMHNP</option>
+          <option>Patel, R., MD</option>
+          <option>Okafor, S., PA-C</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-supervising">Supervising provider</label>
+        <select class="in" id="form-supervising">
+          <option value="">Select&hellip;</option>
+          <option>Reyes, A., MD</option>
+          <option>Patel, R., MD</option>
+          <option>Not applicable</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-referral">Referral source</label>
+        <input class="in" id="form-referral" placeholder="Referring provider or source" />
+      </div>
+      <div class="f">
+        <label for="form-interpreter">Interpreter used</label>
+        <select class="in" id="form-interpreter">
+          <option value="">Select&hellip;</option>
+          <option>No</option>
+          <option>Yes &mdash; in person</option>
+          <option>Yes &mdash; telephonic</option>
+        </select>
+      </div>
+      <div class="f w3">
+        <label for="form-reason">Reason for appointment</label>
+        <input class="in" id="form-reason" placeholder="As booked at scheduling" />
+      </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="card" id="s-vitals">
+      <header>
+        <div class="badge">3</div>
+        <div><h3>Vitals</h3><p>Measurements taken at the start of the visit.</p></div>
+      </header>
+      <div class="body">
+      <div class="grid">
+      <div class="f">
+        <label for="form-bp-sys">BP &mdash; systolic</label>
+        <input class="in" id="form-bp-sys" placeholder="mmHg" />
+      </div>
+      <div class="f">
+        <label for="form-bp-dia">BP &mdash; diastolic</label>
+        <input class="in" id="form-bp-dia" placeholder="mmHg" />
+      </div>
+      <div class="f">
+        <label for="form-bp-pos">Position</label>
+        <select class="in" id="form-bp-pos">
+          <option value="">Select&hellip;</option>
+          <option>Sitting</option>
+          <option>Standing</option>
+          <option>Supine</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-hr">Heart rate</label>
+        <input class="in" id="form-hr" placeholder="bpm" />
+      </div>
+      <div class="f">
+        <label for="form-rr">Respiratory rate</label>
+        <input class="in" id="form-rr" placeholder="/min" />
+      </div>
+      <div class="f">
+        <label for="form-spo2">Oxygen saturation</label>
+        <input class="in" id="form-spo2" placeholder="% on room air" />
+      </div>
+      <div class="f">
+        <label for="form-temp">Temperature</label>
+        <input class="in" id="form-temp" placeholder="&deg;F" />
+      </div>
+      <div class="f">
+        <label for="form-temp-route">Temp route</label>
+        <select class="in" id="form-temp-route">
+          <option value="">Select&hellip;</option>
+          <option>Oral</option>
+          <option>Temporal</option>
+          <option>Tympanic</option>
+          <option>Axillary</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-pain">Pain score</label>
+        <select class="in" id="form-pain">
+          <option value="">Select&hellip;</option>
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-ht-ft">Height &mdash; feet</label>
+        <input class="in" id="form-ht-ft" placeholder="ft" />
+      </div>
+      <div class="f">
+        <label for="form-ht-in">Height &mdash; inches</label>
+        <input class="in" id="form-ht-in" placeholder="in" />
+      </div>
+      <div class="f">
+        <label for="form-wt">Weight</label>
+        <input class="in" id="form-wt" placeholder="lbs" />
+      </div>
+      <div class="f">
+        <label for="form-bmi">BMI</label>
+        <input class="in" id="form-bmi" placeholder="Calculated" readonly />
+        <span class="hint">Updates automatically from height and weight</span>
+      </div>
+      <div class="f w2">
+        <label for="form-vitals-by">Recorded by</label>
+        <input class="in" id="form-vitals-by" placeholder="Staff name and time" />
+      </div>
+      </div>
+      </div>
+    </section>
+
+    <section class="card" id="s-history">
+      <header>
+        <div class="badge">4</div>
+        <div><h3>History</h3><p>Presenting problem, allergies and the medications the patient takes now.</p></div>
+      </header>
+      <div class="body">
+      <div class="grid">
+      <div class="f w2">
+        <label for="form-cc">Chief complaint<em>*</em></label>
+        <input class="in" id="form-cc" placeholder="In the patient&rsquo;s own words" data-req="1" />
+      </div>
+      <div class="f">
+        <label for="form-onset">Onset</label>
+        <input class="in" id="form-onset" placeholder="e.g. 3 days ago" />
+      </div>
+      <div class="f">
+        <label for="form-duration">Duration</label>
+        <input class="in" id="form-duration" placeholder="e.g. intermittent, 2 weeks" />
+      </div>
+      <div class="f">
+        <label for="form-severity">Severity (0&ndash;10)</label>
+        <select class="in" id="form-severity">
+          <option value="">Select&hellip;</option>
+          <option>0</option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+          <option>9</option>
+          <option>10</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-context">Context / modifying factors</label>
+        <input class="in" id="form-context" placeholder="What makes it better or worse" />
+      </div>
+      <div class="f w3">
+        <label for="form-hpi">History of present illness</label>
+        <textarea class="in" id="form-hpi" rows="5" placeholder="Onset, location, duration, character, aggravating and relieving factors, timing, severity&hellip;"></textarea>
+      </div>
+      <div class="f w3">
+        <label for="form-pmh">Relevant past history</label>
+        <textarea class="in" id="form-pmh" rows="3" placeholder="Pertinent medical, surgical, family or social history for this visit&hellip;"></textarea>
+      </div>
+      </div>
+      <div class="sublabel">Allergies</div>
+      <div class="chips" style="margin-bottom:12px"><label class="chip"><input type="checkbox" id="form-nkda" /><span>No known drug allergies</span></label><label class="chip"><input type="checkbox" id="form-meds-reviewed" /><span>Medication list reviewed today</span></label></div>
+      <div class="rows" id="form-allergies">
+        <div class="rhead" style="grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.1fr"><span>Allergen</span><span>Type</span><span>Reaction</span><span>Severity</span><span>Noted</span></div>
+        <div class="r" style="grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.1fr">
+          <input class="in" placeholder="Allergen" />
+          <select class="in"><option value="">&mdash;</option><option>Medication</option><option>Food</option><option>Environmental</option></select>
+          <input class="in" placeholder="Reaction" />
+          <select class="in"><option value="">&mdash;</option><option>Mild</option><option>Moderate</option><option>Severe</option></select>
+          <input class="in" placeholder="Noted" />
+        </div>
+        <div class="r" style="grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.1fr">
+          <input class="in" placeholder="Allergen" />
+          <select class="in"><option value="">&mdash;</option><option>Medication</option><option>Food</option><option>Environmental</option></select>
+          <input class="in" placeholder="Reaction" />
+          <select class="in"><option value="">&mdash;</option><option>Mild</option><option>Moderate</option><option>Severe</option></select>
+          <input class="in" placeholder="Noted" />
+        </div>
+      </div>
+      <button type="button" class="addrow" onclick="toast('Add allergy (demo)')"><svg class="ic" style="width:14px;height:14px"><use href="#p-plus"/></svg>Add allergy</button>
+      <div class="sublabel">Current medications</div>
+      <div class="rows" id="form-medications">
+        <div class="rhead" style="grid-template-columns:1.6fr 1.1fr 1.2fr 1.1fr 0.9fr"><span>Medication</span><span>Dose &amp; route</span><span>Frequency</span><span>Prescriber</span><span>Status</span></div>
+        <div class="r" style="grid-template-columns:1.6fr 1.1fr 1.2fr 1.1fr 0.9fr">
+          <input class="in" placeholder="Medication" />
+          <input class="in" placeholder="Dose &amp; route" />
+          <input class="in" placeholder="Frequency" />
+          <input class="in" placeholder="Prescriber" />
+          <select class="in"><option value="">&mdash;</option><option>Active</option><option>Hold</option><option>Discontinued</option></select>
+        </div>
+        <div class="r" style="grid-template-columns:1.6fr 1.1fr 1.2fr 1.1fr 0.9fr">
+          <input class="in" placeholder="Medication" />
+          <input class="in" placeholder="Dose &amp; route" />
+          <input class="in" placeholder="Frequency" />
+          <input class="in" placeholder="Prescriber" />
+          <select class="in"><option value="">&mdash;</option><option>Active</option><option>Hold</option><option>Discontinued</option></select>
+        </div>
+        <div class="r" style="grid-template-columns:1.6fr 1.1fr 1.2fr 1.1fr 0.9fr">
+          <input class="in" placeholder="Medication" />
+          <input class="in" placeholder="Dose &amp; route" />
+          <input class="in" placeholder="Frequency" />
+          <input class="in" placeholder="Prescriber" />
+          <select class="in"><option value="">&mdash;</option><option>Active</option><option>Hold</option><option>Discontinued</option></select>
+        </div>
+      </div>
+      <button type="button" class="addrow" onclick="toast('Add medication (demo)')"><svg class="ic" style="width:14px;height:14px"><use href="#p-plus"/></svg>Add medication</button>
+      </div>
+    </section>
+
+    <section class="card" id="s-ros">
+      <header>
+        <div class="badge">5</div>
+        <div><h3>Review of systems</h3><p>Tap any system with a positive finding, then add detail.</p></div>
+      </header>
+      <div class="body">
+      <div class="chips" style="margin-bottom:16px"><label class="chip"><input type="checkbox" id="form-ros-negative" /><span>All systems reviewed and negative except as noted</span></label><label class="chip"><input type="checkbox" /><span>Unable to obtain</span></label></div>
+      <div class="sublabel">Positive findings</div>
+      <div class="chips" id="form-ros">
+        <label class="chip"><input type="checkbox" /><span>Constitutional</span></label>
+        <label class="chip"><input type="checkbox" /><span>Eyes</span></label>
+        <label class="chip"><input type="checkbox" /><span>ENT / mouth</span></label>
+        <label class="chip"><input type="checkbox" /><span>Cardiovascular</span></label>
+        <label class="chip"><input type="checkbox" /><span>Respiratory</span></label>
+        <label class="chip"><input type="checkbox" /><span>Gastrointestinal</span></label>
+        <label class="chip"><input type="checkbox" /><span>Genitourinary</span></label>
+        <label class="chip"><input type="checkbox" /><span>Musculoskeletal</span></label>
+        <label class="chip"><input type="checkbox" /><span>Skin / breast</span></label>
+        <label class="chip"><input type="checkbox" /><span>Neurological</span></label>
+        <label class="chip"><input type="checkbox" /><span>Psychiatric</span></label>
+        <label class="chip"><input type="checkbox" /><span>Endocrine</span></label>
+        <label class="chip"><input type="checkbox" /><span>Hematologic / lymphatic</span></label>
+        <label class="chip"><input type="checkbox" /><span>Allergic / immunologic</span></label>
+      </div>
+      <div style="margin-top:18px">      <div class="grid">
+      <div class="f w3">
+        <label for="form-ros-notes">Review of systems notes</label>
+        <textarea class="in" id="form-ros-notes" rows="3" placeholder="Detail any positive findings&hellip;"></textarea>
+      </div>
+      </div></div>
+      </div>
+    </section>
+
+    <section class="card" id="s-exam">
+      <header>
+        <div class="badge">6</div>
+        <div><h3>Exam &amp; assessment</h3><p>Objective findings and the diagnoses being addressed.</p></div>
+      </header>
+      <div class="body">
+      <div class="grid">
+      <div class="f">
+        <label for="form-exam-general">General appearance</label>
+        <select class="in" id="form-exam-general">
+          <option value="">Select&hellip;</option>
+          <option>Well appearing, no acute distress</option>
+          <option>Mildly ill appearing</option>
+          <option>Chronically ill appearing</option>
+          <option>Acute distress</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-exam-orientation">Orientation</label>
+        <select class="in" id="form-exam-orientation">
+          <option value="">Select&hellip;</option>
+          <option>Alert and oriented &times;3</option>
+          <option>Alert and oriented &times;4</option>
+          <option>Disoriented</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-exam-type">Exam type</label>
+        <select class="in" id="form-exam-type">
+          <option value="">Select&hellip;</option>
+          <option>Problem focused</option>
+          <option>Expanded problem focused</option>
+          <option>Detailed</option>
+          <option>Comprehensive</option>
+        </select>
+      </div>
+      <div class="f w3">
+        <label for="form-exam">Physical examination</label>
+        <textarea class="in" id="form-exam" rows="5" placeholder="Document exam by system&hellip;"></textarea>
+      </div>
+      <div class="f w3">
+        <label for="form-mse">Mental status examination</label>
+        <textarea class="in" id="form-mse" rows="4" placeholder="Appearance, behavior, speech, mood, affect, thought process and content, cognition, insight, judgment&hellip;"></textarea>
+      </div>
+      </div>
+      <div class="sublabel">Diagnoses</div>
+      <div class="rows" id="form-diagnoses">
+        <div class="rhead" style="grid-template-columns:0.8fr 2fr 0.9fr 1.1fr 0.9fr"><span>ICD-10</span><span>Description</span><span>Type</span><span>Status</span><span>Onset</span></div>
+        <div class="r" style="grid-template-columns:0.8fr 2fr 0.9fr 1.1fr 0.9fr">
+          <input class="in" placeholder="ICD-10" />
+          <input class="in" placeholder="Description" />
+          <select class="in"><option value="">&mdash;</option><option>Primary</option><option>Secondary</option></select>
+          <select class="in"><option value="">&mdash;</option><option>New</option><option>Chronic &mdash; stable</option><option>Chronic &mdash; worsening</option><option>Improved</option><option>Resolved</option></select>
+          <input class="in" placeholder="Onset" />
+        </div>
+        <div class="r" style="grid-template-columns:0.8fr 2fr 0.9fr 1.1fr 0.9fr">
+          <input class="in" placeholder="ICD-10" />
+          <input class="in" placeholder="Description" />
+          <select class="in"><option value="">&mdash;</option><option>Primary</option><option>Secondary</option></select>
+          <select class="in"><option value="">&mdash;</option><option>New</option><option>Chronic &mdash; stable</option><option>Chronic &mdash; worsening</option><option>Improved</option><option>Resolved</option></select>
+          <input class="in" placeholder="Onset" />
+        </div>
+        <div class="r" style="grid-template-columns:0.8fr 2fr 0.9fr 1.1fr 0.9fr">
+          <input class="in" placeholder="ICD-10" />
+          <input class="in" placeholder="Description" />
+          <select class="in"><option value="">&mdash;</option><option>Primary</option><option>Secondary</option></select>
+          <select class="in"><option value="">&mdash;</option><option>New</option><option>Chronic &mdash; stable</option><option>Chronic &mdash; worsening</option><option>Improved</option><option>Resolved</option></select>
+          <input class="in" placeholder="Onset" />
+        </div>
+      </div>
+      <button type="button" class="addrow" onclick="toast('Add diagnosis (demo)')"><svg class="ic" style="width:14px;height:14px"><use href="#p-plus"/></svg>Add diagnosis</button>
+      <div style="margin-top:18px">      <div class="grid">
+      <div class="f w3">
+        <label for="form-assessment">Clinical assessment</label>
+        <textarea class="in" id="form-assessment" rows="4" placeholder="Clinical impression and reasoning&hellip;"></textarea>
+      </div>
+      </div></div>
+      </div>
+    </section>
+
+    <section class="card" id="s-plan">
+      <header>
+        <div class="badge">7</div>
+        <div><h3>Plan</h3><p>What happens next: treatment, prescriptions, orders and follow-up.</p></div>
+      </header>
+      <div class="body">
+      <div class="grid">
+      <div class="f w3">
+        <label for="form-plan">Treatment plan</label>
+        <textarea class="in" id="form-plan" rows="4" placeholder="Treatment plan, counseling, coordination of care&hellip;"></textarea>
+      </div>
+      </div>
+      <div class="sublabel">Prescriptions written today</div>
+      <div class="rows" id="form-rx">
+        <div class="rhead" style="grid-template-columns:1.5fr 1.8fr 0.55fr 0.6fr 0.9fr"><span>Drug</span><span>Sig / directions</span><span>Qty</span><span>Refills</span><span>Route</span></div>
+        <div class="r" style="grid-template-columns:1.5fr 1.8fr 0.55fr 0.6fr 0.9fr">
+          <input class="in" placeholder="Drug" />
+          <input class="in" placeholder="Sig / directions" />
+          <input class="in" placeholder="Qty" />
+          <input class="in" placeholder="Refills" />
+          <select class="in"><option value="">&mdash;</option><option>PO</option><option>IM</option><option>SubQ</option><option>Topical</option><option>Inhaled</option></select>
+        </div>
+        <div class="r" style="grid-template-columns:1.5fr 1.8fr 0.55fr 0.6fr 0.9fr">
+          <input class="in" placeholder="Drug" />
+          <input class="in" placeholder="Sig / directions" />
+          <input class="in" placeholder="Qty" />
+          <input class="in" placeholder="Refills" />
+          <select class="in"><option value="">&mdash;</option><option>PO</option><option>IM</option><option>SubQ</option><option>Topical</option><option>Inhaled</option></select>
+        </div>
+        <div class="r" style="grid-template-columns:1.5fr 1.8fr 0.55fr 0.6fr 0.9fr">
+          <input class="in" placeholder="Drug" />
+          <input class="in" placeholder="Sig / directions" />
+          <input class="in" placeholder="Qty" />
+          <input class="in" placeholder="Refills" />
+          <select class="in"><option value="">&mdash;</option><option>PO</option><option>IM</option><option>SubQ</option><option>Topical</option><option>Inhaled</option></select>
+        </div>
+      </div>
+      <button type="button" class="addrow" onclick="toast('Add prescription (demo)')"><svg class="ic" style="width:14px;height:14px"><use href="#p-plus"/></svg>Add prescription</button>
+      <div class="sublabel">Orders placed</div>
+      <div class="chips" id="form-orders">
+        <label class="chip"><input type="checkbox" /><span>CBC with differential</span></label>
+        <label class="chip"><input type="checkbox" /><span>Comprehensive metabolic panel</span></label>
+        <label class="chip"><input type="checkbox" /><span>Lipid panel</span></label>
+        <label class="chip"><input type="checkbox" /><span>HbA1c</span></label>
+        <label class="chip"><input type="checkbox" /><span>TSH</span></label>
+        <label class="chip"><input type="checkbox" /><span>Urinalysis</span></label>
+        <label class="chip"><input type="checkbox" /><span>EKG</span></label>
+        <label class="chip"><input type="checkbox" /><span>Chest X-ray</span></label>
+        <label class="chip"><input type="checkbox" /><span>Drug level</span></label>
+        <label class="chip"><input type="checkbox" /><span>Pregnancy test</span></label>
+        <label class="chip"><input type="checkbox" /><span>Respiratory panel</span></label>
+        <label class="chip"><input type="checkbox" /><span>None today</span></label>
+      </div>
+      <div style="margin-top:18px">      <div class="grid">
+      <div class="f w2">
+        <label for="form-referrals">Referrals</label>
+        <input class="in" id="form-referrals" placeholder="Specialty and reason for referral" />
+      </div>
+      <div class="f">
+        <label for="form-order-priority">Order priority</label>
+        <select class="in" id="form-order-priority">
+          <option value="">Select&hellip;</option>
+          <option>Routine</option>
+          <option>Urgent</option>
+          <option>STAT</option>
+        </select>
+      </div>
+      <div class="f w3">
+        <label for="form-instructions">Patient instructions &amp; education</label>
+        <textarea class="in" id="form-instructions" rows="3" placeholder="Instructions given to the patient, education provided, materials handed out&hellip;"></textarea>
+      </div>
+      <div class="f">
+        <label for="form-followup">Follow-up interval</label>
+        <select class="in" id="form-followup">
+          <option value="">Select&hellip;</option>
+          <option>1 week</option>
+          <option>2 weeks</option>
+          <option>4 weeks</option>
+          <option>3 months</option>
+          <option>6 months</option>
+          <option>1 year</option>
+          <option>As needed</option>
+          <option>No follow-up needed</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-followup-date">Follow-up date</label>
+        <input class="in" id="form-followup-date" placeholder="MM/DD/YYYY" />
+      </div>
+      <div class="f">
+        <label for="form-appt-scheduled">Appointment scheduled</label>
+        <select class="in" id="form-appt-scheduled">
+          <option value="">Select&hellip;</option>
+          <option>Yes &mdash; booked today</option>
+          <option>No &mdash; patient to call</option>
+          <option>Referred out</option>
+        </select>
+      </div>
+      <div class="f w3">
+        <label for="form-precautions">Return precautions</label>
+        <textarea class="in" id="form-precautions" rows="2" placeholder="Symptoms that should prompt an earlier return or urgent care&hellip;"></textarea>
+      </div>
+      </div></div>
+      </div>
+    </section>
+
+    <section class="card" id="s-billing">
+      <header>
+        <div class="badge">8</div>
+        <div><h3>Billing &amp; signature</h3><p>Coding for the visit, then attest and sign.</p></div>
+      </header>
+      <div class="body">
+      <div class="grid">
+      <div class="f">
+        <label for="form-cpt">E&amp;M / CPT code<em>*</em></label>
+        <select class="in" id="form-cpt" data-req="1">
+          <option value="">Select&hellip;</option>
+          <option>99212 &mdash; established, straightforward</option>
+          <option>99213 &mdash; established, low</option>
+          <option>99214 &mdash; established, moderate</option>
+          <option>99215 &mdash; established, high</option>
+          <option>99203 &mdash; new, low</option>
+          <option>99204 &mdash; new, moderate</option>
+          <option>90833 &mdash; psychotherapy 16&ndash;37 min add-on</option>
+          <option>90836 &mdash; psychotherapy 38&ndash;52 min add-on</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-modifiers">Modifiers</label>
+        <input class="in" id="form-modifiers" placeholder="e.g. 25, 95" />
+      </div>
+      <div class="f">
+        <label for="form-units">Units</label>
+        <input class="in" id="form-units" placeholder="1" />
+      </div>
+      <div class="f">
+        <label for="form-time-spent">Total time spent</label>
+        <input class="in" id="form-time-spent" placeholder="minutes" />
+      </div>
+      <div class="f">
+        <label for="form-coding-basis">Coding basis</label>
+        <select class="in" id="form-coding-basis">
+          <option value="">Select&hellip;</option>
+          <option>Medical decision making</option>
+          <option>Total time on date of service</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-pos">Place of service</label>
+        <select class="in" id="form-pos">
+          <option value="">Select&hellip;</option>
+          <option>11 &mdash; Office</option>
+          <option>02 &mdash; Telehealth, other than home</option>
+          <option>10 &mdash; Telehealth in home</option>
+          <option>12 &mdash; Home</option>
+        </select>
+      </div>
+      <div class="f w2">
+        <label for="form-addon-codes">Additional / add-on codes</label>
+        <input class="in" id="form-addon-codes" placeholder="Separate multiple codes with commas" />
+      </div>
+      <div class="f">
+        <label for="form-prior-auth">Prior authorization</label>
+        <select class="in" id="form-prior-auth">
+          <option value="">Select&hellip;</option>
+          <option>Not required</option>
+          <option>On file</option>
+          <option>Pending</option>
+          <option>Required &mdash; not obtained</option>
+        </select>
+      </div>
+      </div>
+      <div class="sublabel">Attestation</div>
+      <label class="attest"><input type="checkbox" id="form-attest" data-req="1" /><span>I attest that this documentation is accurate and complete for the services rendered, and that the patient details above were entered for this encounter.</span></label>
+      <label class="attest"><input type="checkbox" /><span>Note prepared with scribe assistance and reviewed by the rendering provider.</span></label>
+      <div class="grid">
+      <div class="f">
+        <label for="form-signer">Provider name<em>*</em></label>
+        <input class="in" id="form-signer" placeholder="Last, First" data-req="1" />
+      </div>
+      <div class="f">
+        <label for="form-credentials">Credentials</label>
+        <select class="in" id="form-credentials">
+          <option value="">Select&hellip;</option>
+          <option>MD</option>
+          <option>DO</option>
+          <option>PMHNP</option>
+          <option>PA-C</option>
+          <option>LCSW</option>
+          <option>RN</option>
+        </select>
+      </div>
+      <div class="f">
+        <label for="form-sign-date">Signature date &amp; time</label>
+        <input class="in" id="form-sign-date" placeholder="MM/DD/YYYY hh:mm" />
+      </div>
+      </div>
+      </div>
+    </section>
+
+  </div><!-- /pages -->
+</div><!-- /shell -->
+
+<div class="foot">Mock interface for demonstration only &mdash; synthetic data, not a real EHR, not affiliated with any EHR vendor, and not for clinical use. Nothing entered here is stored or transmitted.</div>
+
+<div class="dock">
+  <div class="inner">
+    <div class="status"><b id="dockPct">0%</b> of required fields complete &middot; <span id="dockReq">0 required fields left</span></div>
+    <div class="grow"></div>
+    <button class="btn btn-quiet" id="clearBtn">Clear form</button>
+    <button class="btn btn-ghost" onclick="window.print()"><svg class="ic"><use href="#p-print"/></svg>Print</button>
+    <button class="btn btn-ghost" onclick="toast('Draft saved (demo)')">Save draft</button>
+    <button class="btn btn-primary" onclick="submitForm()">Submit encounter</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  /* ---------- toast ---------- */
+  let toastTimer = null;
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+
+  /* ---------- field collections ---------- */
+  const fields = Array.from(document.querySelectorAll('.card .in, .card .chip input, .card .attest input'));
+  const reqFields = Array.from(document.querySelectorAll('[data-req]'));
+
+  function isFilled(el){
+    if (el.classList && el.classList.contains('seg')) return !!el.querySelector('input:checked');
+    if (el.type === 'checkbox' || el.type === 'radio') return el.checked;
+    return el.value.trim() !== '';
+  }
+
+  /* ---------- progress ---------- */
+  function updateProgress(){
+    const filled = fields.filter(isFilled).length;
+    const reqDone = reqFields.filter(isFilled).length;
+    const pct = reqFields.length ? Math.round(reqDone / reqFields.length * 100) : 0;
+    document.getElementById('pct').textContent = pct + '%';
+    document.getElementById('bar').style.width = pct + '%';
+    document.getElementById('filled').textContent = filled;
+    document.getElementById('total').textContent = fields.length;
+    document.getElementById('reqLeft').textContent = reqFields.length - reqDone;
+    document.getElementById('reqCount').textContent = reqDone;
+    document.getElementById('reqTotal').textContent = reqFields.length;
+    document.getElementById('dockPct').textContent = pct + '%';
+    const left = reqFields.length - reqDone;
+    document.getElementById('dockReq').textContent =
+      left === 0 ? 'all required fields complete' : left + ' required field' + (left === 1 ? '' : 's') + ' left';
+    document.querySelectorAll('.card').forEach(c=>{
+      const own = Array.from(c.querySelectorAll('.in, .chip input, .attest input, .seg'));
+      const step = document.querySelector('.step[data-target="' + c.id + '"]');
+      if (step) step.classList.toggle('done', own.some(isFilled));
+    });
+  }
+  function clearMissing(el){
+    el.classList.remove('missing');
+    const seg = el.closest('.seg'); if (seg) seg.classList.remove('missing');
+    const att = el.closest('.attest'); if (att) att.classList.remove('missing');
+  }
+  document.addEventListener('input', e=>{ clearMissing(e.target); updateProgress(); });
+  document.addEventListener('change', e=>{ clearMissing(e.target); updateProgress(); });
+
+  /* ---------- BMI ---------- */
+  function calcBMI(){
+    const ft = parseFloat(document.getElementById('form-ht-ft').value) || 0;
+    const inch = parseFloat(document.getElementById('form-ht-in').value) || 0;
+    const lb = parseFloat(document.getElementById('form-wt').value) || 0;
+    const h = ft * 12 + inch;
+    document.getElementById('form-bmi').value = (h > 0 && lb > 0) ? (703 * lb / (h * h)).toFixed(1) : '';
+    updateProgress();
+  }
+  ['form-ht-ft','form-ht-in','form-wt'].forEach(id=>document.getElementById(id).addEventListener('input', calcBMI));
+
+  /* ---------- step rail ---------- */
+  const steps = Array.from(document.querySelectorAll('.step'));
+  steps.forEach(s=>s.addEventListener('click', ()=>{
+    document.getElementById(s.dataset.target).scrollIntoView({behavior:'smooth', block:'start'});
+  }));
+  const spy = new IntersectionObserver(entries=>{
+    entries.forEach(en=>{
+      if (en.isIntersecting){
+        steps.forEach(s=>s.classList.toggle('active', s.dataset.target === en.target.id));
+      }
+    });
+  }, {rootMargin:'-80px 0px -65% 0px', threshold:0});
+  document.querySelectorAll('.card').forEach(c=>spy.observe(c));
+
+  /* ---------- clear ---------- */
+  document.getElementById('clearBtn').addEventListener('click', ()=>{
+    document.querySelectorAll('.card input, .card textarea').forEach(el=>{
+      if (el.type === 'checkbox' || el.type === 'radio') el.checked = false; else el.value = '';
+    });
+    document.querySelectorAll('.card select').forEach(s=>{ s.selectedIndex = 0; });
+    document.querySelectorAll('.missing').forEach(x=>x.classList.remove('missing'));
+    document.getElementById('errBanner').classList.remove('show');
+    document.getElementById('okBanner').classList.remove('show');
+    updateProgress();
+    toast('Form cleared');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+
+  /* ---------- submit ---------- */
+  function submitForm(){
+    const missing = reqFields.filter(el=>!isFilled(el));
+    const err = document.getElementById('errBanner');
+    const ok = document.getElementById('okBanner');
+    document.querySelectorAll('.missing').forEach(x=>x.classList.remove('missing'));
+    if (missing.length){
+      missing.forEach(el=>{
+        const att = el.closest('.attest');
+        el.classList.add('missing');
+        if (att) att.classList.add('missing');
+      });
+      const names = missing.map(el=>{
+        if (el.closest('.attest')) return 'Attestation';
+        const wrap = el.closest('.f');
+        const lab = wrap && wrap.querySelector('label');
+        return lab ? lab.textContent.replace('*','').trim() : 'a required field';
+      });
+      document.getElementById('errText').textContent =
+        missing.length + ' required field' + (missing.length === 1 ? '' : 's') + ' still empty: ' + names.join(', ') + '.';
+      ok.classList.remove('show');
+      err.classList.add('show');
+      err.scrollIntoView({behavior:'smooth', block:'center'});
+      toast('Missing required fields');
+      return;
+    }
+    err.classList.remove('show');
+    ok.classList.add('show');
+    ok.scrollIntoView({behavior:'smooth', block:'center'});
+    toast('Encounter submitted (demo)');
+  }
+
+  /* ---------- textarea auto-grow ---------- */
+  document.querySelectorAll('textarea.in').forEach(el=>{
+    el.addEventListener('input', ()=>{ el.style.height='auto'; el.style.height=(el.scrollHeight+2)+'px'; });
+  });
+
+  updateProgress();
+</script>
+</body>
+</html>
