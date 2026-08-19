@@ -15,7 +15,7 @@ demos or test snippets against, without touching any real system or patient data
 | --- | --- |
 | `index.html` | Main demo page — a psychiatric follow-up note for a depression visit. |
 | `alternative_index.html` | Same page with the patient summary rail swapped to a Type 2 diabetes context (recent labs instead of medications). |
-| `form_filling.html` | A separate product entirely — "Northstar Charting", a blank new-patient encounter form. Different brand, layout, palette and interaction model. |
+| `form_filling.html` | Separate GenericCare page — a blank new-patient encounter form. Same brand and palette, different layout (step rail, section cards, progress meter). |
 
 Every file is standalone: one HTML file each, with inline CSS, inline JavaScript, and inline SVG
 icons. No build step, no dependencies, no network requests, no data persistence — reloading the
@@ -48,7 +48,7 @@ icons, and a staff menu. Most icons are decorative; clickable ones raise a toast
 **Left sidebar** — Client Dashboard, Client Information (active by default), Patient Intake
 Information, Medication Management / Rx, Client Orders, Client MAR, and
 SmartLinks. Pinned to the very bottom of the sidebar, on its own darker strip with a **+** badge,
-sits Patient Form Filling — a link out to `form_filling.html`, a different application altogether.
+sits Patient Form Filling — a link out to `form_filling.html`, a separate GenericCare page.
 Within this page, two items switch what the main area shows:
 
 | Nav item | Shows |
@@ -145,12 +145,13 @@ Stable IDs are on the fields a demo snippet is most likely to target:
 
 ## The form filling page (`form_filling.html`)
 
-A deliberately different product: **Northstar Charting**, a blank new-patient encounter form. It
-shares no styling, markup or script with the EMR page — indigo on off-white instead of clinical
-blue, rounded cards instead of dense panels, a sticky step rail instead of tabs, pill buttons,
-chip toggles and a segmented control instead of checkboxes and radios. Reached from the Patient
-Form Filling item at the bottom of the EMR's sidebar; "Back to chart" in its header returns to
-`index.html`.
+A separate GenericCare screen for starting a blank new-patient encounter. Same product identity as
+the chart page — the GenericCare wordmark and mark, the same blue palette, type and control styling
+— but a different page: a step rail instead of the clinical sidebar, one card per section instead
+of a tabbed note, a completion meter, chip toggles and a segmented control, and a sticky action
+dock. It is its own file with its own CSS and script, so it can diverge without touching the chart
+page. Reached from the Patient Form Filling item at the bottom of the EMR's sidebar; "Back to
+chart" in its header returns to `index.html`.
 
 **Layout** — a sticky top bar (brand, breadcrumb, unsaved-draft indicator, back link, submit), a
 left step rail listing the eight sections, the form itself as one card per section, and a fixed
@@ -210,8 +211,9 @@ variables at the top; to add a tab, add a `.tab1` with a `data-main` value plus 
 standalone sidebar section, add a `.nav-item` calling `showSection('…')`, a matching
 `.main-panel[data-main="…"]`, and an entry in the `SECTIONS` map.
 
-`form_filling.html` shares nothing with the other two — its own palette, type scale, components and
-script — so edit it on its own terms. Its layout is a sticky step rail plus one `.card` per section;
+`form_filling.html` re-declares the GenericCare palette in its own `:root` and defines its own
+components, so it can be edited without touching the chart pages (and vice versa — palette changes
+have to be made in both places). Its layout is a sticky step rail plus one `.card` per section;
 to add a section, add a `.card` with an `id`, a matching `.step` button with `data-target="…"`, and
 the scroll-spy and progress meter pick it up automatically.
 
