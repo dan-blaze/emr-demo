@@ -67,7 +67,14 @@
   .nav-item:hover { background:var(--nav-active); }
   .nav-item.active { background:rgba(255,255,255,0.10); border-left-color:var(--accent); font-weight:600; }
   .nav-item.active .ic { color:#fff; }
+  a.nav-item { text-decoration:none; }
   .nav-sep { height:1px; background:rgba(255,255,255,0.10); margin:8px 14px; }
+  .nav-bottom { margin-top:auto; padding:8px 0 10px; border-top:1px solid rgba(255,255,255,0.12);
+                background:rgba(0,0,0,0.10); }
+  .nav-new span { flex:1 1 auto; }
+  .nav-new .plus { width:18px; height:18px; padding:3px; border-radius:50%; color:#fff;
+                   background:rgba(255,255,255,0.16); flex:0 0 auto; }
+  .nav-new:hover .plus { background:var(--accent); }
 
   /* ===== Main ===== */
   .main { flex:1 1 auto; display:flex; flex-direction:column; min-width:0; background:var(--page-bg); }
@@ -217,6 +224,82 @@
                background:#fdecea; border:1px solid #f2bcb6; color:#a5281b; font-size:12px; }
   .phq-alert .ic { color:#cf4032; }
 
+  /* ===== Patient Intake Information (completed form view) ===== */
+  .ifm { max-width:1000px; }
+  .ifm-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .ifm-bar .spacer { flex:1 1 auto; }
+  .ifm-stamp { font-size:11px; text-transform:uppercase; letter-spacing:.6px; font-weight:700;
+               color:#1f6b46; background:#e6f4ec; border:1px solid #b8dcc7; border-radius:12px; padding:3px 11px; }
+  .ifm-note { font-size:11.5px; color:var(--muted); }
+  .ifm-btn { font-size:12px; font-family:var(--font); color:var(--blue-deep); background:#fff;
+             border:1px solid var(--border); border-radius:3px; padding:5px 12px; cursor:pointer;
+             display:inline-flex; align-items:center; gap:6px; }
+  .ifm-btn:hover { background:var(--blue-pale); border-color:var(--blue); }
+  .ifm-btn .ic { width:14px; height:14px; }
+
+  .ifm-id { display:flex; flex-wrap:wrap; gap:5px 24px; background:var(--blue-pale); border:1px solid var(--blue-tint);
+            border-radius:5px; padding:9px 13px; }
+  .ifm-id .b { font-size:12.5px; color:var(--text); }
+  .ifm-id .b .lb { font-size:10px; text-transform:uppercase; letter-spacing:.5px; color:var(--blue-deep);
+                   opacity:.75; margin-right:5px; }
+  .ifm-id .b b { font-weight:600; }
+  .ifm-src { font-size:11.5px; color:var(--muted); margin:9px 0 2px; }
+  .ifm-src b { color:var(--label); font-weight:600; }
+
+  .ifm-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:13px 16px; }
+  .ifm-grid.g2 { grid-template-columns:repeat(2,1fr); }
+  .ifm-grid .span2 { grid-column:span 2; }
+  .ifm-grid .full { grid-column:1 / -1; }
+  @media (max-width:860px){
+    .ifm-grid, .ifm-grid.g2 { grid-template-columns:1fr; }
+    .ifm-grid .span2, .ifm-grid .full { grid-column:auto; }
+  }
+  .ifm-fld { display:flex; flex-direction:column; gap:4px; min-width:0; }
+  .ifm-fld > label { font-size:11px; color:var(--label); letter-spacing:.2px; }
+  .ifm-fld .control { width:100%; min-width:0; }
+  .ifm-fld textarea.control { min-height:74px; }
+  .ifm-fld .control:hover { border-color:#a9bccd; }
+  .ifm-fld .hint { font-size:10.5px; color:var(--muted); }
+
+  /* repeating row groups (contacts, allergies, medications, family history) */
+  .ifm-rows { border:1px solid var(--border-soft); border-radius:5px; overflow:hidden; background:#fff; }
+  .ifm-rows .hdr, .ifm-rows .row { display:grid; gap:8px; padding:7px 10px; align-items:center; }
+  .ifm-rows .hdr { background:#f4f7fa; border-bottom:1px solid var(--border); font-size:10px; font-weight:700;
+                   text-transform:uppercase; letter-spacing:.5px; color:var(--muted); }
+  .ifm-rows .row + .row { border-top:1px solid var(--border-soft); }
+  .ifm-rows .row:nth-child(even) { background:#fbfcfe; }
+  .ifm-rows .control { width:100%; min-width:0; padding:4px 7px; }
+  @media (max-width:860px){
+    .ifm-rows .hdr { display:none; }
+    .ifm-rows .row { grid-template-columns:1fr !important; }
+  }
+  .ifm-add { display:inline-flex; align-items:center; gap:5px; margin-top:7px; font-size:12px; color:var(--link);
+             background:none; border:none; padding:0; cursor:pointer; font-family:var(--font); }
+  .ifm-add:hover { color:var(--blue-dark); text-decoration:underline; }
+  .ifm-add .ic { width:13px; height:13px; }
+
+  .ifm-checks { display:grid; grid-template-columns:repeat(3,1fr); gap:9px 16px; margin-bottom:16px; }
+  .ifm-checks.c2 { grid-template-columns:repeat(2,1fr); }
+  @media (max-width:860px){ .ifm-checks, .ifm-checks.c2 { grid-template-columns:1fr; } }
+
+  .ifm-alert { display:flex; align-items:flex-start; gap:9px; background:#fdecea; border:1px solid #f2bcb6;
+               border-radius:5px; padding:9px 12px; margin-bottom:11px; font-size:12px; color:#a5281b; }
+  .ifm-alert .ic { color:#cf4032; margin-top:1px; }
+  .ifm-alert b { font-weight:700; }
+
+  .ifm-sign { display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--muted); margin-top:4px; }
+  .ifm-sign .chip { font-size:10.5px; font-weight:700; text-transform:uppercase; letter-spacing:.5px;
+                    color:var(--blue-deep); background:var(--blue-pale); border:1px solid var(--blue-tint);
+                    border-radius:10px; padding:2px 9px; }
+
+  @media print {
+    body { background:#fff; }
+    .topbar, .sidebar, .rail, .doc-title, .doc-toolbar, .tabs1, .tabs2, .disclaimer, .ifm-bar, .ifm-add, .toast { display:none !important; }
+    .ehr, .body, .main, .content { display:block; height:auto; overflow:visible; }
+    .content { padding:0; }
+    .sheet { border:none; box-shadow:none; padding:0; }
+  }
+
   .placeholder { background:#fff; border:1px dashed var(--border); border-radius:6px; padding:46px 24px;
                  text-align:center; color:var(--muted); max-width:1000px; }
   .placeholder .pt { font-size:15px; color:var(--label); margin-bottom:5px; }
@@ -314,12 +397,22 @@
       </div>
       <div class="nav">
         <div class="nav-item" onclick="toast('Client Dashboard (demo)')"><svg class="ic"><use href="#i-home"/></svg> Client Dashboard</div>
-        <div class="nav-item active"><svg class="ic"><use href="#i-idcard"/></svg> Client Information</div>
+        <div class="nav-item active" id="nav-client" onclick="showSection('client')"><svg class="ic"><use href="#i-idcard"/></svg> Client Information</div>
+        <div class="nav-item" id="nav-intake" onclick="showSection('intake')"><svg class="ic"><use href="#i-clipboard"/></svg> Patient Intake Information</div>
         <div class="nav-item" onclick="toast('Medication Management (demo)')"><svg class="ic"><use href="#i-pill"/></svg> Medication Management / Rx</div>
         <div class="nav-item" onclick="toast('Client Orders (demo)')"><svg class="ic"><use href="#i-clipboard"/></svg> Client Orders</div>
         <div class="nav-item" onclick="toast('Client MAR (demo)')"><svg class="ic"><use href="#i-table"/></svg> Client MAR</div>
         <div class="nav-sep"></div>
         <div class="nav-item" onclick="toast('SmartLinks (demo)')"><svg class="ic"><use href="#i-link"/></svg> SmartLinks</div>
+      </div>
+
+      <!-- pinned to the bottom of the sidebar: opens the standalone new-encounter form -->
+      <div class="nav-bottom">
+        <a class="nav-item nav-new" id="nav-form" href="form_filling.html" title="Start a new encounter form">
+          <svg class="ic"><use href="#i-list"/></svg>
+          <span>Patient Form Filling</span>
+          <svg class="ic plus"><use href="#i-plus"/></svg>
+        </a>
       </div>
     </nav>
 
@@ -327,7 +420,7 @@
     <main class="main">
 
       <div class="doc-title">
-        <h1>Psychiatric Note</h1>
+        <h1 id="docTitle">Psychiatric Note</h1>
         <div class="dt-icons">
           <svg class="ic" title="Save"><use href="#i-save"/></svg>
           <svg class="ic" title="Print"><use href="#i-print"/></svg>
@@ -387,6 +480,705 @@
       </div>
 
       <div class="content">
+
+        <!-- ===================== PATIENT INTAKE MAIN PANEL ===================== -->
+        <div class="main-panel hidden" data-main="intake">
+          <div class="ifm">
+
+          <div class="ifm-bar">
+            <span class="ifm-stamp">Completed &middot; Verified</span>
+            <span class="ifm-note">Intake form BH-101 &middot; submitted 03/29/2022 08:47 &middot; last updated 03/29/2022 09:05</span>
+            <span class="spacer"></span>
+            <button class="ifm-btn" onclick="toast('Intake form saved (demo)')"><svg class="ic"><use href="#i-save"/></svg>Save</button>
+            <button class="ifm-btn" onclick="window.print()"><svg class="ic"><use href="#i-print"/></svg>Print</button>
+            <button class="ifm-btn" onclick="toast('Revision history unavailable in this mock (demo)')"><svg class="ic"><use href="#i-history"/></svg>History</button>
+          </div>
+
+          <div class="sheet">
+
+          <div class="ifm-id">
+            <div class="b"><span class="lb">Patient</span><b id="intake-name">Williams, Katie A.</b></div>
+            <div class="b"><span class="lb">MRN</span><b id="intake-mrn">2104730</b></div>
+            <div class="b"><span class="lb">DOB</span><b id="intake-dob">07/14/1979</b></div>
+            <div class="b"><span class="lb">Age</span><b id="intake-age">42 y</b></div>
+            <div class="b"><span class="lb">Sex</span><b id="intake-sex">Female</b></div>
+            <div class="b"><span class="lb">Account</span><b id="intake-acct">88291043</b></div>
+            <div class="b"><span class="lb">Visit</span><b id="intake-visit">03/29/2022</b></div>
+          </div>
+          <div class="ifm-src"><b>Source:</b> patient-completed on front-desk tablet &middot; <b>Verified by:</b> Ramirez, D., CMA on 03/29/2022 09:05 &middot; <b>ID &amp; insurance card:</b> scanned to chart</div>
+
+          <div class="section-bar">1 &middot; Patient Demographics</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld">
+              <label>Last name</label>
+              <input class="control" value="Williams" />
+            </div>
+            <div class="ifm-fld">
+              <label>First name</label>
+              <input class="control" value="Katie" />
+            </div>
+            <div class="ifm-fld">
+              <label>Middle name</label>
+              <input class="control" value="Anne" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-preferred">Preferred name</label>
+              <input class="control" id="intake-preferred" value="Katie" />
+            </div>
+            <div class="ifm-fld">
+              <label>Date of birth</label>
+              <input class="control" value="07/14/1979" />
+            </div>
+            <div class="ifm-fld">
+              <label>Age</label>
+              <input class="control" value="42 years" />
+            </div>
+            <div class="ifm-fld">
+              <label>Sex assigned at birth</label>
+              <select class="control">
+                <option selected>Female</option>
+                <option>Male</option>
+                <option>Intersex</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Gender identity</label>
+              <select class="control">
+                <option selected>Female</option>
+                <option>Male</option>
+                <option>Non-binary</option>
+                <option>Transgender female</option>
+                <option>Transgender male</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-pronouns">Pronouns</label>
+              <select class="control" id="intake-pronouns">
+                <option selected>she / her</option>
+                <option>he / him</option>
+                <option>they / them</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-marital">Marital status</label>
+              <select class="control" id="intake-marital">
+                <option>Single</option>
+                <option>Married</option>
+                <option selected>Divorced</option>
+                <option>Separated</option>
+                <option>Widowed</option>
+                <option>Partnered</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Race</label>
+              <select class="control">
+                <option selected>White</option>
+                <option>Black or African American</option>
+                <option>Asian</option>
+                <option>American Indian or Alaska Native</option>
+                <option>Native Hawaiian or Pacific Islander</option>
+                <option>More than one race</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Ethnicity</label>
+              <select class="control">
+                <option>Hispanic or Latino</option>
+                <option selected>Not Hispanic or Latino</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-language">Preferred language</label>
+              <input class="control" id="intake-language" value="English" />
+            </div>
+            <div class="ifm-fld">
+              <label>Interpreter needed</label>
+              <select class="control">
+                <option>Yes</option>
+                <option selected>No</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Social Security number</label>
+              <input class="control" value="&bull;&bull;&bull;-&bull;&bull;-4417" />
+            </div>
+            <div class="ifm-fld">
+              <label>Veteran status</label>
+              <select class="control">
+                <option>Yes</option>
+                <option selected>No</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Religion / spiritual preference</label>
+              <input class="control" value="Declined to answer" />
+            </div>
+            <div class="ifm-fld">
+              <label>Legal guardian</label>
+              <input class="control" value="Not applicable" />
+            </div>
+          </div>
+
+          <div class="section-bar">2 &middot; Contact Information</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld span2">
+              <label for="intake-address">Street address</label>
+              <input class="control" id="intake-address" value="812 Ridgeway Drive, Apt 4B" />
+            </div>
+            <div class="ifm-fld">
+              <label>County</label>
+              <input class="control" value="Sangamon" />
+            </div>
+            <div class="ifm-fld">
+              <label>City</label>
+              <input class="control" value="Springfield" />
+            </div>
+            <div class="ifm-fld">
+              <label>State</label>
+              <input class="control" value="IL" />
+            </div>
+            <div class="ifm-fld">
+              <label>ZIP code</label>
+              <input class="control" value="62703" />
+            </div>
+            <div class="ifm-fld">
+              <label>Mailing address</label>
+              <input class="control" value="Same as home" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-phone">Mobile phone</label>
+              <input class="control" id="intake-phone" value="(217) 555-0188" />
+            </div>
+            <div class="ifm-fld">
+              <label>Home phone</label>
+              <input class="control" value="None reported" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-email">Email</label>
+              <input class="control" id="intake-email" value="k.williams79@example.com" />
+            </div>
+            <div class="ifm-fld">
+              <label>Preferred contact method</label>
+              <select class="control">
+                <option selected>Mobile phone (text)</option>
+                <option>Mobile phone (call)</option>
+                <option>Home phone</option>
+                <option>Email</option>
+                <option>Patient portal</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>OK to leave voicemail</label>
+              <input class="control" value="Yes &mdash; name and callback only" />
+            </div>
+            <div class="ifm-fld">
+              <label>Appointment reminders</label>
+              <input class="control" value="Text message, 24 h prior" />
+            </div>
+            <div class="ifm-fld">
+              <label>Patient portal</label>
+              <input class="control" value="Activated 02/11/2022" />
+            </div>
+            <div class="ifm-fld">
+              <label>Transportation barrier</label>
+              <input class="control" value="No &mdash; drives self" />
+            </div>
+          </div>
+
+          <div class="section-bar">3 &middot; Emergency Contacts &amp; Next of Kin</div>
+          <div class="ifm-rows" id="intake-emergency">
+            <div class="hdr" style="grid-template-columns:1.6fr 1fr 1fr 0.9fr 1.4fr"><span>Name</span><span>Relationship</span><span>Phone</span><span>Priority</span><span>Release of information</span></div>
+            <div class="row" style="grid-template-columns:1.6fr 1fr 1fr 0.9fr 1.4fr">
+              <input class="control" value="Doyle, Margaret" />
+              <input class="control" value="Mother" />
+              <input class="control" value="(217) 555-0119" />
+              <select class="control"><option selected>Primary</option><option>Secondary</option></select>
+              <input class="control" value="Authorized &mdash; may discuss care" />
+            </div>
+            <div class="row" style="grid-template-columns:1.6fr 1fr 1fr 0.9fr 1.4fr">
+              <input class="control" value="Williams, Sean" />
+              <input class="control" value="Brother" />
+              <input class="control" value="(217) 555-0164" />
+              <select class="control"><option>Primary</option><option selected>Secondary</option></select>
+              <input class="control" value="Emergency only" />
+            </div>
+          </div>
+          <button type="button" class="ifm-add" onclick="toast('Add contact (demo)')"><svg class="ic"><use href="#i-plus"/></svg>Add contact</button>
+
+          <div class="section-bar">4 &middot; Employment, Household &amp; Guarantor</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld">
+              <label>Employment status</label>
+              <select class="control">
+                <option selected>Employed, full time</option>
+                <option>Employed, part time</option>
+                <option>Self-employed</option>
+                <option>Unemployed</option>
+                <option>Student</option>
+                <option>Retired</option>
+                <option>Disabled</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-occupation">Occupation</label>
+              <input class="control" id="intake-occupation" value="Medical billing specialist" />
+            </div>
+            <div class="ifm-fld">
+              <label>Employer</label>
+              <input class="control" value="Sangamon Valley Clinic Group" />
+            </div>
+            <div class="ifm-fld">
+              <label>Work phone</label>
+              <input class="control" value="(217) 555-0200 ext. 314" />
+            </div>
+            <div class="ifm-fld">
+              <label>Guarantor</label>
+              <input class="control" value="Self (patient)" />
+            </div>
+            <div class="ifm-fld">
+              <label>Household size</label>
+              <input class="control" value="2 (patient + 1 dependent)" />
+            </div>
+            <div class="ifm-fld">
+              <label>Annual household income</label>
+              <input class="control" value="$45,000 &ndash; $59,999" />
+            </div>
+            <div class="ifm-fld">
+              <label>Sliding-fee eligibility</label>
+              <input class="control" value="Not applicable &mdash; insured" />
+            </div>
+            <div class="ifm-fld">
+              <label>Financial counseling requested</label>
+              <select class="control">
+                <option>Yes</option>
+                <option selected>No</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="section-bar">5 &middot; Insurance &amp; Coverage</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld">
+              <label for="intake-payer">Primary payer</label>
+              <input class="control" id="intake-payer" value="BlueShield of Illinois &mdash; PPO" />
+            </div>
+            <div class="ifm-fld">
+              <label>Plan</label>
+              <input class="control" value="Choice Advantage 5000" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-memberid">Member ID</label>
+              <input class="control" id="intake-memberid" value="XJP884210377" />
+            </div>
+            <div class="ifm-fld">
+              <label>Group number</label>
+              <input class="control" value="SVCG-0042" />
+            </div>
+            <div class="ifm-fld">
+              <label>Subscriber</label>
+              <select class="control">
+                <option selected>Self</option>
+                <option>Spouse</option>
+                <option>Parent</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Effective date</label>
+              <input class="control" value="01/01/2022" />
+            </div>
+            <div class="ifm-fld">
+              <label>Specialist copay</label>
+              <input class="control" value="$30 per visit" />
+            </div>
+            <div class="ifm-fld">
+              <label>Deductible met</label>
+              <input class="control" value="$450 of $1,500" />
+            </div>
+            <div class="ifm-fld">
+              <label>Behavioral health carve-out</label>
+              <input class="control" value="None &mdash; managed by plan" />
+            </div>
+            <div class="ifm-fld">
+              <label>Prior authorization</label>
+              <input class="control" value="Not required for outpatient BH" />
+            </div>
+            <div class="ifm-fld">
+              <label>Secondary coverage</label>
+              <input class="control" value="None reported" />
+            </div>
+            <div class="ifm-fld">
+              <label>Eligibility verified</label>
+              <input class="control" value="03/29/2022 08:52 &mdash; active" />
+            </div>
+          </div>
+
+          <div class="section-bar">6 &middot; Reason for Visit &amp; Referral</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld">
+              <label>Visit type</label>
+              <select class="control">
+                <option selected>Follow-up &mdash; established patient</option>
+                <option>Initial evaluation</option>
+                <option>Medication management</option>
+                <option>Crisis / walk-in</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Symptom onset</label>
+              <input class="control" value="Approx. 8 months ago" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-referral">Referral source</label>
+              <input class="control" id="intake-referral" value="Patel, R., MD (primary care)" />
+            </div>
+            <div class="ifm-fld span2">
+              <label for="intake-pcp">Primary care provider</label>
+              <input class="control" id="intake-pcp" value="Patel, R., MD &mdash; Sangamon Family Medicine" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-pharmacy">Preferred pharmacy</label>
+              <input class="control" id="intake-pharmacy" value="Maple Street Drug &mdash; (217) 555-0130" />
+            </div>
+            <div class="ifm-fld">
+              <label>Last visit at this clinic</label>
+              <input class="control" value="02/15/2022" />
+            </div>
+            <div class="ifm-fld full">
+              <label for="intake-reason">Presenting concern &mdash; in the patient's own words</label>
+              <textarea class="control" id="intake-reason" rows="3">I&rsquo;ve been down most days for about eight months. I&rsquo;m sleeping badly, I don&rsquo;t enjoy things I used to, and it&rsquo;s getting hard to keep up at work. The sertraline has helped my energy a little but the mood is still low.</textarea>
+            </div>
+          </div>
+
+          <div class="section-bar">7 &middot; Allergies &amp; Adverse Reactions</div>
+          <div class="ifm-alert"><svg class="ic"><use href="#i-warn"/></svg><span><b>Drug allergy on file:</b> sulfonamide antibiotics &mdash; verify before prescribing.</span></div>
+          <div class="ifm-rows" id="intake-allergies">
+            <div class="hdr" style="grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.2fr"><span>Allergen</span><span>Type</span><span>Reaction</span><span>Severity</span><span>Noted</span></div>
+            <div class="row" style="grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.2fr">
+              <input class="control" value="Sulfamethoxazole / trimethoprim" />
+              <select class="control"><option selected>Medication</option><option>Food</option><option>Environmental</option></select>
+              <input class="control" value="Diffuse rash, itching" />
+              <select class="control"><option>Mild</option><option selected>Moderate</option><option>Severe</option></select>
+              <input class="control" value="2014 &mdash; patient reported" />
+            </div>
+            <div class="row" style="grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.2fr">
+              <input class="control" value="Latex" />
+              <select class="control"><option>Medication</option><option>Food</option><option selected>Environmental</option></select>
+              <input class="control" value="Contact dermatitis" />
+              <select class="control"><option selected>Mild</option><option>Moderate</option><option>Severe</option></select>
+              <input class="control" value="2016 &mdash; patient reported" />
+            </div>
+            <div class="row" style="grid-template-columns:1.6fr 1fr 1.4fr 1fr 1.2fr">
+              <input class="control" value="No known food allergies" />
+              <select class="control"><option>Medication</option><option selected>Food</option><option>Environmental</option></select>
+              <input class="control" value="&mdash;" />
+              <select class="control"><option selected>Mild</option><option>Moderate</option><option>Severe</option></select>
+              <input class="control" value="Confirmed 03/29/2022" />
+            </div>
+          </div>
+          <button type="button" class="ifm-add" onclick="toast('Add allergy (demo)')"><svg class="ic"><use href="#i-plus"/></svg>Add allergy</button>
+
+          <div class="section-bar">8 &middot; Current Medications (self-reported)</div>
+          <div class="ifm-rows" id="intake-meds">
+            <div class="hdr" style="grid-template-columns:1.6fr 1.1fr 1.3fr 1.1fr 0.8fr"><span>Medication</span><span>Dose &amp; route</span><span>Frequency</span><span>Prescriber</span><span>Started</span></div>
+            <div class="row" style="grid-template-columns:1.6fr 1.1fr 1.3fr 1.1fr 0.8fr">
+              <input class="control" value="Zoloft (sertraline)" />
+              <input class="control" value="50 mg PO" />
+              <input class="control" value="Once daily, AM" />
+              <input class="control" value="Reyes, A., MD" />
+              <input class="control" value="01/2022" />
+            </div>
+            <div class="row" style="grid-template-columns:1.6fr 1.1fr 1.3fr 1.1fr 0.8fr">
+              <input class="control" value="Metformin HCl" />
+              <input class="control" value="500 mg PO" />
+              <input class="control" value="Twice daily with meals" />
+              <input class="control" value="Patel, R., MD" />
+              <input class="control" value="2019" />
+            </div>
+            <div class="row" style="grid-template-columns:1.6fr 1.1fr 1.3fr 1.1fr 0.8fr">
+              <input class="control" value="Cholecalciferol (vitamin D3, OTC)" />
+              <input class="control" value="2,000 IU PO" />
+              <input class="control" value="Once daily" />
+              <input class="control" value="Self" />
+              <input class="control" value="2020" />
+            </div>
+            <div class="row" style="grid-template-columns:1.6fr 1.1fr 1.3fr 1.1fr 0.8fr">
+              <input class="control" value="Ibuprofen (OTC)" />
+              <input class="control" value="200&ndash;400 mg PO" />
+              <input class="control" value="As needed for headache" />
+              <input class="control" value="Self" />
+              <input class="control" value="&mdash;" />
+            </div>
+          </div>
+          <button type="button" class="ifm-add" onclick="toast('Add medication (demo)')"><svg class="ic"><use href="#i-plus"/></svg>Add medication</button>
+
+          <div class="section-bar">9 &middot; Medical &amp; Surgical History</div>
+          <div class="ifm-note" style="margin:-2px 0 9px">Check all conditions the patient has been diagnosed with:</div>
+          <div class="ifm-checks" id="intake-conditions">
+            <label class="check"><input type="checkbox" checked /><span>Depression</span></label>
+            <label class="check"><input type="checkbox" checked /><span>Type 2 diabetes mellitus</span></label>
+            <label class="check"><input type="checkbox" checked /><span>Obesity</span></label>
+            <label class="check"><input type="checkbox" checked /><span>Migraine headaches</span></label>
+            <label class="check"><input type="checkbox" /><span>Hypertension</span></label>
+            <label class="check"><input type="checkbox" /><span>Thyroid disease</span></label>
+            <label class="check"><input type="checkbox" /><span>Seizure disorder</span></label>
+            <label class="check"><input type="checkbox" /><span>Asthma / COPD</span></label>
+            <label class="check"><input type="checkbox" /><span>Cardiac disease</span></label>
+            <label class="check"><input type="checkbox" /><span>Cancer</span></label>
+            <label class="check"><input type="checkbox" /><span>Head injury / concussion</span></label>
+            <label class="check"><input type="checkbox" /><span>Chronic pain</span></label>
+          </div>
+
+          <div class="ifm-grid">
+            <div class="ifm-fld span2">
+              <label>Prior surgeries</label>
+              <input class="control" value="Cholecystectomy (2016), wisdom teeth (2001)" />
+            </div>
+            <div class="ifm-fld">
+              <label>Hospitalizations, past 12 months</label>
+              <input class="control" value="None" />
+            </div>
+            <div class="ifm-fld">
+              <label>Obstetric history</label>
+              <input class="control" value="G2 P2 &mdash; last delivery 2010" />
+            </div>
+            <div class="ifm-fld">
+              <label>Pregnancy status</label>
+              <input class="control" value="Not pregnant &mdash; patient reported" />
+            </div>
+            <div class="ifm-fld">
+              <label>Last physical exam</label>
+              <input class="control" value="11/2021 &mdash; Patel, R., MD" />
+            </div>
+            <div class="ifm-fld">
+              <label>Immunizations</label>
+              <input class="control" value="Up to date; influenza 10/2021" />
+            </div>
+          </div>
+
+          <div class="section-bar">10 &middot; Family History</div>
+          <div class="ifm-rows" id="intake-family">
+            <div class="hdr" style="grid-template-columns:1.1fr 1.8fr 1.6fr"><span>Relation</span><span>Conditions</span><span>Notes</span></div>
+            <div class="row" style="grid-template-columns:1.1fr 1.8fr 1.6fr">
+              <input class="control" value="Mother, living (68)" />
+              <input class="control" value="Depression, type 2 diabetes" />
+              <input class="control" value="Treated with SSRI, good response" />
+            </div>
+            <div class="row" style="grid-template-columns:1.1fr 1.8fr 1.6fr">
+              <input class="control" value="Father, deceased (61)" />
+              <input class="control" value="Hypertension, myocardial infarction" />
+              <input class="control" value="Died 2011" />
+            </div>
+            <div class="row" style="grid-template-columns:1.1fr 1.8fr 1.6fr">
+              <input class="control" value="Sister (39)" />
+              <input class="control" value="Generalized anxiety disorder" />
+              <input class="control" value="In therapy" />
+            </div>
+            <div class="row" style="grid-template-columns:1.1fr 1.8fr 1.6fr">
+              <input class="control" value="Maternal grandmother" />
+              <input class="control" value="Dementia" />
+              <input class="control" value="Onset in her 70s" />
+            </div>
+          </div>
+          <button type="button" class="ifm-add" onclick="toast('Add family member (demo)')"><svg class="ic"><use href="#i-plus"/></svg>Add family member</button>
+
+          <div class="section-bar">11 &middot; Behavioral Health History &amp; Safety</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld span2">
+              <label>Prior outpatient treatment</label>
+              <input class="control" value="CBT, 12 sessions (2018&ndash;2019)" />
+            </div>
+            <div class="ifm-fld">
+              <label>Prior psychiatric admission</label>
+              <input class="control" value="None" />
+            </div>
+            <div class="ifm-fld">
+              <label>Prior suicide attempt</label>
+              <input class="control" value="None reported" />
+            </div>
+            <div class="ifm-fld">
+              <label>Self-harm history</label>
+              <input class="control" value="None reported" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-si">Current suicidal / homicidal ideation</label>
+              <input class="control" id="intake-si" value="Denies SI and HI" />
+            </div>
+            <div class="ifm-fld">
+              <label>Firearms in home</label>
+              <select class="control">
+                <option>Yes</option>
+                <option selected>No</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Prior psychotropic trials</label>
+              <input class="control" value="Fluoxetine 2018 &mdash; stopped for nausea" />
+            </div>
+            <div class="ifm-fld">
+              <label>Safety plan on file</label>
+              <input class="control" value="Yes &mdash; reviewed 02/15/2022" />
+            </div>
+          </div>
+
+          <div class="section-bar">12 &middot; Social History</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld span2">
+              <label>Living situation</label>
+              <input class="control" value="Rents apartment; lives with 12-year-old daughter" />
+            </div>
+            <div class="ifm-fld">
+              <label>Relationship status</label>
+              <input class="control" value="Divorced 2019; co-parents" />
+            </div>
+            <div class="ifm-fld">
+              <label>Education</label>
+              <input class="control" value="Associate degree" />
+            </div>
+            <div class="ifm-fld">
+              <label>Housing / food insecurity screen</label>
+              <select class="control">
+                <option selected>Negative</option>
+                <option>Positive</option>
+                <option>Declined</option>
+              </select>
+            </div>
+            <div class="ifm-fld">
+              <label>Support system</label>
+              <input class="control" value="Mother, sister, one close friend" />
+            </div>
+            <div class="ifm-fld">
+              <label>Tobacco</label>
+              <input class="control" value="Former smoker &mdash; quit 2018, 5 pack-years" />
+            </div>
+            <div class="ifm-fld">
+              <label>Alcohol</label>
+              <input class="control" value="2&ndash;3 drinks per week" />
+            </div>
+            <div class="ifm-fld">
+              <label>Cannabis / other drugs</label>
+              <input class="control" value="Denies" />
+            </div>
+            <div class="ifm-fld">
+              <label>Caffeine</label>
+              <input class="control" value="2 cups coffee daily" />
+            </div>
+            <div class="ifm-fld">
+              <label>Exercise</label>
+              <input class="control" value="Walks ~1&times; per week" />
+            </div>
+            <div class="ifm-fld">
+              <label>Sleep</label>
+              <input class="control" value="5&ndash;6 hours; frequent early waking" />
+            </div>
+            <div class="ifm-fld">
+              <label>Legal involvement</label>
+              <input class="control" value="None" />
+            </div>
+          </div>
+
+          <div class="section-bar">13 &middot; Intake Screening &amp; Vitals</div>
+          <div class="ifm-grid">
+            <div class="ifm-fld">
+              <label for="intake-phq2">PHQ-2 total</label>
+              <input class="control" id="intake-phq2" value="5" />
+              <span class="hint">Positive &mdash; PHQ-9 administered</span>
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-gad7">GAD-7 total</label>
+              <input class="control" id="intake-gad7" value="11" />
+              <span class="hint">Moderate anxiety</span>
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-auditc">AUDIT-C total</label>
+              <input class="control" id="intake-auditc" value="2" />
+              <span class="hint">Below risk threshold</span>
+            </div>
+            <div class="ifm-fld">
+              <label>C-SSRS screen</label>
+              <select class="control">
+                <option selected>Negative</option>
+                <option>Positive</option>
+              </select>
+              <span class="hint">No ideation reported</span>
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-bp">Blood pressure</label>
+              <input class="control" id="intake-bp" value="130/80 mmHg" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-hr">Heart rate</label>
+              <input class="control" id="intake-hr" value="72 bpm" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-rr">Respiratory rate</label>
+              <input class="control" id="intake-rr" value="16 /min" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-temp">Temperature</label>
+              <input class="control" id="intake-temp" value="98.6 &deg;F" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-ht">Height</label>
+              <input class="control" id="intake-ht" value="5 ft 4 in" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-wt">Weight</label>
+              <input class="control" id="intake-wt" value="185 lbs" />
+            </div>
+            <div class="ifm-fld">
+              <label for="intake-bmi">BMI</label>
+              <input class="control" id="intake-bmi" value="31.2" />
+            </div>
+            <div class="ifm-fld">
+              <label>Pain score</label>
+              <input class="control" value="0 / 10" />
+            </div>
+            <div class="ifm-fld">
+              <label>Vitals taken by</label>
+              <input class="control" value="Ramirez, D., CMA at 09:02" />
+            </div>
+          </div>
+
+          <div class="section-bar">14 &middot; Consents &amp; Acknowledgments</div>
+          <div class="ifm-checks c2" id="intake-consents">
+            <label class="check"><input type="checkbox" checked /><span>Notice of Privacy Practices received &mdash; 03/29/2022</span></label>
+            <label class="check"><input type="checkbox" checked /><span>Consent for treatment signed &mdash; 03/29/2022</span></label>
+            <label class="check"><input type="checkbox" checked /><span>Assignment of benefits &amp; financial policy</span></label>
+            <label class="check"><input type="checkbox" checked /><span>Telehealth consent on file &mdash; 02/11/2022</span></label>
+            <label class="check"><input type="checkbox" checked /><span>Release of information to Patel, R., MD</span></label>
+            <label class="check"><input type="checkbox" /><span>Advance directive on file &mdash; information provided</span></label>
+          </div>
+
+          <div class="ifm-grid g2">
+            <div class="ifm-fld">
+              <label>Signed by (patient)</label>
+              <input class="control" value="Katie Williams" />
+            </div>
+            <div class="ifm-fld">
+              <label>Signature date &amp; time</label>
+              <input class="control" value="03/29/2022 08:47" />
+            </div>
+            <div class="ifm-fld">
+              <label>Verified by (staff)</label>
+              <input class="control" value="Ramirez, D., CMA" />
+            </div>
+            <div class="ifm-fld">
+              <label>Verification date &amp; time</label>
+              <input class="control" value="03/29/2022 09:05" />
+            </div>
+          </div>
+          <div class="ifm-sign"><span class="chip">E-signed</span><span>Electronic signature captured on the front-desk tablet and retained with the record.</span></div>
+
+          </div><!-- /sheet -->
+          </div>
+        </div>
 
         <!-- ===================== SOAP MAIN PANEL (default) ===================== -->
         <div class="main-panel" data-main="soap">
@@ -687,8 +1479,12 @@
   const SUB_TITLES = { exam:'Exam', aims:'AIMS (Abnormal Involuntary Movement Scale)', diagnosis:'Diagnosis', psychotherapy:'Psychotherapy' };
   const REAL_SUBS = ['general','mdm'];
 
+  let currentMain = 'soap';   // last document tab shown under Client Information
+
   function showMain(name){
+    currentMain = name;
     document.querySelectorAll('.tab1').forEach(t=>t.classList.toggle('active', t.dataset.main===name));
+    const content = document.querySelector('.content'); if (content) content.scrollTop = 0;
     document.getElementById('tabs2').style.display = (name==='note') ? '' : 'none';
     document.querySelectorAll('.main-panel').forEach(p=>p.classList.add('hidden'));
     if (name==='note'){
@@ -702,6 +1498,28 @@
       document.getElementById('mainTitle').textContent =
         ({service:'Service',billing:'Billing Diagnosis',addon:'Add-On Codes',warnings:'Warnings'})[name] || 'Tab';
       g.classList.remove('hidden');
+    }
+  }
+
+  /* ---------- Sidebar section switching (Client Information vs the standalone forms) ---------- */
+  const SECTIONS = {
+    intake: { nav:'nav-intake', title:'Patient Intake Information' }
+  };
+
+  function showSection(name){
+    const sec = SECTIONS[name];
+    Object.keys(SECTIONS).forEach(k=>document.getElementById(SECTIONS[k].nav).classList.toggle('active', k===name));
+    document.getElementById('nav-client').classList.toggle('active', !sec);
+    document.getElementById('tabs1').style.display = sec ? 'none' : '';
+    document.querySelector('.doc-toolbar').style.display = sec ? 'none' : '';
+    document.getElementById('docTitle').textContent = sec ? sec.title : 'Psychiatric Note';
+    if (sec){
+      document.getElementById('tabs2').style.display = 'none';
+      document.querySelectorAll('.main-panel').forEach(p=>p.classList.add('hidden'));
+      document.querySelector('.main-panel[data-main="'+name+'"]').classList.remove('hidden');
+      const content = document.querySelector('.content'); if (content) content.scrollTop = 0;
+    } else {
+      showMain(currentMain);
     }
   }
 
