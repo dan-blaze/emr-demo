@@ -3,208 +3,192 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>GenericCare &mdash; New Patient Encounter (Mock)</title>
+<title>Northstar Charting &mdash; New Patient Encounter (Mock)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
 <style>
   :root{
-    /* same GenericCare palette as the chart page */
-    --ink:#274a72; --body:#33404d; --muted:#7e8a96; --faint:#98a3ae;
-    --accent:#2f6fa8; --accent-dark:#255c8c; --accent-deep:#1f4d77;
-    --accent-soft:#eaf2fa; --accent-line:#dce8f4; --accent-bright:#3b8ed0;
-    --ok:#2e8b60; --ok-soft:#e8f4ee; --ok-line:#bfe0cd;
-    --warn:#c08616; --err:#cf4032; --err-soft:#fdecea; --err-line:#f2bcb6;
-    --bg:#eef2f6; --card:#ffffff; --line:#c4d0db; --line-soft:#dde4ec; --field:#ffffff;
-    --section-bg:#d8e6f3; --section-text:#1f4d77; --titlebar-a:#eef3f9; --titlebar-b:#dde7f2;
-    --r-lg:6px; --r-md:5px; --r-sm:3px;
-    --shadow:0 1px 3px rgba(40,70,90,.10);
-    --font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --ink:#151a26; --body:#414a5c; --muted:#7b8494; --faint:#9aa2b1;
+    --accent:#5b4bd6; --accent-dark:#4535b9; --accent-soft:#efedfe; --accent-line:#d9d4fb;
+    --ok:#0f9163; --ok-soft:#e7f6ef; --warn:#b8651a; --warn-soft:#fdf2e4; --err:#cc3b46; --err-soft:#fdeced;
+    --bg:#f5f5fa; --card:#ffffff; --line:#e6e6f0; --line-soft:#f0f0f6; --field:#fcfcfe;
+    --r-lg:16px; --r-md:10px; --r-sm:8px;
+    --shadow:0 1px 2px rgba(21,26,38,.04), 0 8px 24px rgba(21,26,38,.06);
+    --font:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
-  body{background:var(--bg); color:var(--body); font-family:var(--font); font-size:13px; line-height:1.5;
-       -webkit-font-smoothing:antialiased}
+  body{background:var(--bg); color:var(--body); font-family:var(--font); font-size:14px; line-height:1.55;
+       -webkit-font-smoothing:antialiased;}
   a{color:var(--accent); text-decoration:none}
   a:hover{text-decoration:underline}
   .ic{width:16px;height:16px;display:inline-block;vertical-align:middle;flex:0 0 auto}
 
-  /* ---------- top bar: same chrome as the chart page ---------- */
-  .top{position:sticky; top:0; z-index:40; background:#fff; border-bottom:1px solid var(--line);
-       display:flex; align-items:center; gap:14px; padding:0 14px; height:46px; color:#2c4a6e}
-  .brand{display:flex; align-items:center; gap:7px; font-size:17px; font-weight:600; color:#274a72; letter-spacing:.2px}
-  .brand .mark{width:22px;height:22px;border-radius:5px;background:linear-gradient(135deg,var(--accent-bright),var(--accent-dark));
-               display:grid;place-items:center;color:#fff}
-  .brand .mark .ic{width:14px;height:14px}
-  .top .sep{width:1px;height:24px;background:var(--line-soft)}
+  /* ---------- top bar ---------- */
+  .top{position:sticky; top:0; z-index:40; background:rgba(255,255,255,.92); backdrop-filter:blur(8px);
+       border-bottom:1px solid var(--line); display:flex; align-items:center; gap:18px; padding:0 26px; height:60px}
+  .brand{display:flex; align-items:center; gap:10px; font-size:16px; font-weight:600; color:var(--ink); letter-spacing:-.2px}
+  .brand .mark{width:28px;height:28px;border-radius:9px;background:linear-gradient(140deg,#6c5cf0,#4a37c4);
+               display:grid;place-items:center;color:#fff;box-shadow:0 4px 12px rgba(91,75,214,.35)}
+  .brand .mark .ic{width:16px;height:16px}
+  .brand span{font-weight:400;color:var(--muted)}
+  .top .sep{width:1px;height:26px;background:var(--line)}
   .crumb{font-size:13px;color:var(--muted)}
-  .crumb b{color:#274a72;font-weight:600}
+  .crumb b{color:var(--ink);font-weight:600}
   .top .grow{flex:1}
-  .top .save-state{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .top .save-state{font-size:12.5px;color:var(--faint);display:flex;align-items:center;gap:6px}
   .top .save-state .dot{width:7px;height:7px;border-radius:50%;background:var(--warn)}
 
-  .btn{font-family:var(--font); font-size:13px; font-weight:600; border-radius:var(--r-sm); padding:6px 16px;
-       cursor:pointer; border:1px solid var(--line); background:#fff; color:var(--accent-deep);
-       display:inline-flex; align-items:center; gap:7px; transition:.12s}
-  .btn-ghost:hover{background:var(--accent-soft); border-color:var(--accent)}
-  .btn-primary{background:var(--accent); border-color:var(--accent-dark); color:#fff}
+  .btn{font-family:var(--font); font-size:13.5px; font-weight:500; border-radius:999px; padding:9px 18px;
+       cursor:pointer; border:1px solid transparent; display:inline-flex; align-items:center; gap:7px; transition:.15s}
+  .btn-ghost{background:transparent;color:var(--body);border-color:var(--line)}
+  .btn-ghost:hover{background:#fff;border-color:#d3d3e2;color:var(--ink)}
+  .btn-primary{background:var(--accent);color:#fff;box-shadow:0 6px 16px rgba(91,75,214,.28)}
   .btn-primary:hover{background:var(--accent-dark)}
-  .btn-quiet{background:none; border:none; color:var(--accent); font-weight:400; text-decoration:underline; padding:6px 8px}
+  .btn-quiet{background:transparent;border:none;color:var(--muted);padding:8px 10px}
   .btn-quiet:hover{color:var(--err)}
 
-  /* ---------- shell: step rail + stacked section cards ---------- */
-  .shell{max-width:1180px; margin:0 auto; padding:18px 18px 96px; display:grid;
-         grid-template-columns:228px minmax(0,1fr); gap:22px; align-items:start}
-  @media (max-width:1000px){ .shell{grid-template-columns:1fr} .rail{display:none} }
+  /* ---------- shell ---------- */
+  .shell{max-width:1240px; margin:0 auto; padding:30px 26px 130px; display:grid;
+         grid-template-columns:250px minmax(0,1fr); gap:34px; align-items:start}
+  @media (max-width:1000px){ .shell{grid-template-columns:1fr; padding-top:20px} .rail{display:none} }
 
-  .rail{position:sticky; top:64px; background:var(--card); border:1px solid var(--line-soft);
-        border-radius:var(--r-lg); box-shadow:var(--shadow); overflow:hidden}
-  .rail h2{font-size:11px; text-transform:uppercase; letter-spacing:.6px; color:var(--section-text); font-weight:700;
-           margin:0; padding:9px 14px; background:linear-gradient(180deg,var(--titlebar-a),var(--titlebar-b));
-           border-bottom:1px solid var(--line-soft)}
-  .step{display:flex; gap:10px; align-items:flex-start; padding:8px 14px; cursor:pointer; color:var(--body);
-        background:none; border:none; border-left:3px solid transparent; width:100%; text-align:left; font-family:var(--font)}
-  .step:hover{background:#f4f7fa}
-  .step .n{width:21px;height:21px;border-radius:50%;background:var(--accent-line);color:var(--accent-deep);
-           font-size:11px;font-weight:700;display:grid;place-items:center;flex:0 0 auto}
-  .step .t{font-size:12.5px;line-height:1.3}
-  .step .t small{display:block;font-size:11px;color:var(--muted)}
-  .step.active{background:var(--accent-soft); border-left-color:var(--accent); color:var(--accent-deep); font-weight:600}
+  /* ---------- step rail ---------- */
+  .rail{position:sticky; top:88px}
+  .rail h2{font-size:11px; text-transform:uppercase; letter-spacing:.9px; color:var(--faint); margin:0 0 14px 14px; font-weight:600}
+  .step{display:flex; gap:12px; align-items:flex-start; padding:9px 14px; border-radius:var(--r-md); cursor:pointer;
+        color:var(--muted); position:relative; background:none; border:none; width:100%; text-align:left; font-family:var(--font)}
+  .step:hover{background:#eeeef7; color:var(--body)}
+  .step .n{width:24px;height:24px;border-radius:50%;background:#e7e7f1;color:var(--muted);font-size:11.5px;font-weight:600;
+           display:grid;place-items:center;flex:0 0 auto;transition:.15s}
+  .step .t{font-size:13.5px;line-height:1.35;padding-top:2px}
+  .step .t small{display:block;font-size:11.5px;color:var(--faint)}
+  .step.active{background:var(--accent-soft); color:var(--accent-dark)}
   .step.active .n{background:var(--accent); color:#fff}
   .step.done .n{background:var(--ok-soft); color:var(--ok)}
-  .rail-done{padding:9px 14px; border-top:1px solid var(--line-soft); font-size:11.5px; color:var(--muted)}
-  .rail-done b{color:var(--ink)}
+  .rail-done{margin:16px 14px 0; font-size:12px; color:var(--faint)}
 
-  /* ---------- page head + progress ---------- */
-  .hero{background:var(--card); border:1px solid var(--line-soft); border-radius:var(--r-lg); box-shadow:var(--shadow);
-        padding:16px 18px; margin-bottom:16px}
-  .hero .eyebrow{font-size:10.5px; text-transform:uppercase; letter-spacing:.7px; color:var(--muted); font-weight:700}
-  .hero h1{font-size:20px; color:var(--ink); margin:4px 0 5px; font-weight:600}
-  .hero p{margin:0; color:var(--muted); font-size:12.5px; max-width:78ch}
-  .meter{margin-top:14px; padding-top:13px; border-top:1px solid var(--line-soft);
-         display:flex; align-items:center; gap:14px; flex-wrap:wrap}
-  .meter .bar{flex:1 1 220px; height:7px; border-radius:99px; background:#e4ebf2; overflow:hidden; min-width:150px}
-  .meter .bar i{display:block; height:100%; width:0; border-radius:99px;
-                background:linear-gradient(90deg,var(--accent),var(--accent-bright)); transition:width .3s}
-  .meter .pct{font-size:20px; font-weight:700; color:var(--ink); min-width:48px}
-  .meter .lbl{font-size:12px; color:var(--muted)}
+  /* ---------- hero + progress ---------- */
+  .hero{margin-bottom:22px}
+  .hero .eyebrow{font-size:11.5px; text-transform:uppercase; letter-spacing:1px; color:var(--accent); font-weight:600}
+  .hero h1{font-size:30px; line-height:1.18; letter-spacing:-.7px; color:var(--ink); margin:8px 0 8px; font-weight:650}
+  .hero p{margin:0; color:var(--muted); font-size:14px; max-width:70ch}
+  .meter{margin-top:20px; background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg);
+         padding:16px 20px; box-shadow:var(--shadow); display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+  .meter .bar{flex:1 1 220px; height:8px; border-radius:99px; background:#ecebf6; overflow:hidden; min-width:160px}
+  .meter .bar i{display:block; height:100%; width:0; border-radius:99px; background:linear-gradient(90deg,#6c5cf0,#a48bff); transition:width .3s}
+  .meter .pct{font-size:20px; font-weight:650; color:var(--ink); letter-spacing:-.4px; min-width:52px}
+  .meter .lbl{font-size:12.5px; color:var(--muted)}
   .meter .lbl b{color:var(--body); font-weight:600}
 
-  /* ---------- section cards ---------- */
-  .card{background:var(--card); border:1px solid var(--line-soft); border-radius:var(--r-lg); box-shadow:var(--shadow);
-        margin-bottom:16px; scroll-margin-top:60px; overflow:hidden}
-  .card > header{display:flex; align-items:center; gap:11px; padding:9px 16px;
-                 background:linear-gradient(180deg,var(--titlebar-a),var(--titlebar-b));
-                 border-bottom:1px solid var(--line-soft)}
-  .card .badge{width:22px;height:22px;border-radius:50%;background:var(--accent);color:#fff;
-               font-size:11.5px;font-weight:700;display:grid;place-items:center;flex:0 0 auto}
-  .card h3{font-size:14px; color:var(--ink); margin:0; font-weight:600}
-  .card header p{margin:1px 0 0; font-size:11.5px; color:var(--muted)}
-  .card .body{padding:16px 18px 20px}
+  /* ---------- cards ---------- */
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow);
+        padding:26px 28px 28px; margin-bottom:22px; scroll-margin-top:84px}
+  .card > header{display:flex; align-items:flex-start; gap:14px; margin-bottom:20px}
+  .card .badge{width:32px;height:32px;border-radius:10px;background:var(--accent-soft);color:var(--accent-dark);
+               font-size:13px;font-weight:650;display:grid;place-items:center;flex:0 0 auto}
+  .card h3{font-size:17.5px; letter-spacing:-.3px; color:var(--ink); margin:0; font-weight:600}
+  .card header p{margin:3px 0 0; font-size:12.5px; color:var(--muted)}
 
-  .grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px 16px}
+  .grid{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:17px 18px}
   .grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
   .grid .w2{grid-column:span 2}
   .grid .w3{grid-column:1/-1}
-  .grid + .grid{margin-top:14px}
+  .grid + .grid{margin-top:17px}
   @media (max-width:760px){ .grid,.grid.g2{grid-template-columns:1fr} .grid .w2,.grid .w3{grid-column:auto} }
 
-  .f{display:flex; flex-direction:column; gap:5px; min-width:0}
-  .f label{font-size:12px; color:var(--body)}
+  .f{display:flex; flex-direction:column; gap:6px; min-width:0}
+  .f label{font-size:12.5px; font-weight:500; color:var(--body)}
   .f label em{color:var(--err); font-style:normal; margin-left:2px}
-  .in{font-family:var(--font); font-size:12.5px; color:var(--body); background:var(--field);
-      border:1px solid var(--line); border-radius:var(--r-sm); padding:6px 9px; width:100%; min-width:0; transition:.12s}
-  .in::placeholder{color:#a9b3bd}
-  .in:hover{border-color:#a9bccd}
-  .in:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 2px rgba(47,111,168,.15)}
-  select.in{appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237e8a96' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
-            background-repeat:no-repeat; background-position:right 8px center; background-size:15px; padding-right:30px}
-  textarea.in{resize:vertical; min-height:74px; line-height:1.55}
-  .in[readonly]{background:#f2f5f8; color:var(--muted)}
+  .in{font-family:var(--font); font-size:13.5px; color:var(--ink); background:var(--field);
+      border:1px solid #dedee9; border-radius:var(--r-sm); padding:10px 12px; width:100%; min-width:0; transition:.15s}
+  .in::placeholder{color:#b3b9c5}
+  .in:hover{border-color:#c9c9da}
+  .in:focus{outline:none; border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px rgba(91,75,214,.14)}
+  select.in{appearance:none; background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237b8494' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+            background-repeat:no-repeat; background-position:right 10px center; background-size:16px; padding-right:34px}
+  textarea.in{resize:vertical; min-height:92px; line-height:1.6}
+  .in[readonly]{background:#f2f2f8; color:var(--muted)}
   .in.missing{border-color:var(--err); background:var(--err-soft)}
-  .f .hint{font-size:11px; color:var(--muted)}
+  .f .hint{font-size:11.5px; color:var(--faint)}
 
   /* segmented control */
-  .seg{display:inline-flex; align-self:flex-start; border:1px solid var(--line); border-radius:var(--r-sm);
-       overflow:hidden; flex-wrap:wrap; background:#fff}
+  .seg{display:inline-flex; align-self:flex-start; background:#eeeef7; border-radius:999px; padding:3px; gap:2px; flex-wrap:wrap}
   .seg label{position:relative; cursor:pointer}
-  .seg label + label{border-left:1px solid var(--line-soft)}
   .seg input{position:absolute; opacity:0; inset:0; margin:0; cursor:pointer}
-  .seg span{display:block; padding:6px 14px; font-size:12px; color:var(--muted); white-space:nowrap}
-  .seg label:hover span{background:var(--accent-soft); color:var(--accent-deep)}
-  .seg input:checked + span{background:var(--accent); color:#fff; font-weight:600}
-  .seg.missing{box-shadow:0 0 0 2px rgba(207,64,50,.25); border-color:var(--err)}
+  .seg span{display:block; padding:7px 15px; border-radius:999px; font-size:12.5px; color:var(--muted); white-space:nowrap}
+  .seg input:checked + span{background:#fff; color:var(--accent-dark); font-weight:600; box-shadow:0 1px 4px rgba(21,26,38,.12)}
+  .seg.missing{box-shadow:0 0 0 3px rgba(204,59,70,.25)}
 
   /* chips */
-  .chips{display:flex; flex-wrap:wrap; gap:7px}
+  .chips{display:flex; flex-wrap:wrap; gap:9px}
   .chip{position:relative; cursor:pointer}
   .chip input{position:absolute; opacity:0; inset:0; margin:0; cursor:pointer}
-  .chip span{display:inline-flex; align-items:center; gap:7px; padding:6px 12px; border-radius:4px; font-size:12.5px;
-             border:1px solid var(--line); background:#fff; color:var(--body); transition:.12s}
-  .chip span::before{content:""; width:13px; height:13px; border-radius:2px; border:1px solid #b6c2cd; flex:0 0 auto; background:#fff}
-  .chip:hover span{border-color:var(--accent); color:var(--accent-deep)}
-  .chip input:checked + span{background:var(--accent-soft); border-color:var(--accent); color:var(--accent-deep); font-weight:600}
-  .chip input:checked + span::before{background:var(--accent); border-color:var(--accent-dark);
-    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.6'><path d='M5 12.5l5 5 9-10'/></svg>");
-    background-size:10px; background-repeat:no-repeat; background-position:center}
+  .chip span{display:inline-flex; align-items:center; gap:7px; padding:8px 15px; border-radius:999px; font-size:13px;
+             border:1px solid #dedee9; background:var(--field); color:var(--body); transition:.15s}
+  .chip span::before{content:""; width:14px; height:14px; border-radius:5px; border:1.5px solid #c9c9da; flex:0 0 auto}
+  .chip:hover span{border-color:#c0bcf0}
+  .chip input:checked + span{background:var(--accent-soft); border-color:var(--accent-line); color:var(--accent-dark); font-weight:500}
+  .chip input:checked + span::before{background:var(--accent); border-color:var(--accent);
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.4'><path d='M5 12.5l5 5 9-10'/></svg>");
+    background-size:11px; background-repeat:no-repeat; background-position:center}
 
-  /* repeating rows */
-  .rows{border:1px solid var(--line-soft); border-radius:var(--r-md); overflow:hidden}
-  .rows .rhead,.rows .r{display:grid; gap:8px; padding:7px 10px; align-items:center}
-  .rows .rhead{background:#f4f7fa; border-bottom:1px solid var(--line); font-size:10px; text-transform:uppercase;
-               letter-spacing:.5px; color:var(--muted); font-weight:700}
+  /* row sets */
+  .rows{border:1px solid var(--line); border-radius:var(--r-md); overflow:hidden}
+  .rows .rhead,.rows .r{display:grid; gap:10px; padding:10px 12px; align-items:center}
+  .rows .rhead{background:#fafafd; border-bottom:1px solid var(--line); font-size:11px; text-transform:uppercase;
+               letter-spacing:.6px; color:var(--faint); font-weight:600}
   .rows .r + .r{border-top:1px solid var(--line-soft)}
-  .rows .r:nth-child(even){background:#fbfcfe}
-  .rows .in{padding:5px 8px; font-size:12.5px}
+  .rows .in{padding:8px 10px; font-size:13px}
   @media (max-width:760px){ .rows .rhead{display:none} .rows .r{grid-template-columns:1fr !important} }
-  .addrow{margin-top:8px; font-size:12.5px; color:var(--accent); background:none; border:none; padding:2px 0;
-          cursor:pointer; display:inline-flex; align-items:center; gap:5px; font-family:var(--font)}
-  .addrow:hover{color:var(--accent-dark); text-decoration:underline}
-  .sublabel{font-size:11px; text-transform:uppercase; letter-spacing:.5px; color:var(--muted); font-weight:700;
-            margin:18px 0 8px}
+  .addrow{margin-top:10px; font-size:13px; font-weight:500; color:var(--accent); background:none; border:none;
+          padding:6px 0; cursor:pointer; display:inline-flex; align-items:center; gap:6px; font-family:var(--font)}
+  .addrow:hover{color:var(--accent-dark)}
+  .sublabel{font-size:11.5px; text-transform:uppercase; letter-spacing:.6px; color:var(--faint); font-weight:600;
+            margin:22px 0 9px}
   .sublabel:first-child{margin-top:0}
 
-  .callout{display:flex; gap:9px; align-items:flex-start; background:var(--accent-soft); border:1px solid var(--accent-line);
-           color:var(--accent-deep); border-radius:var(--r-md); padding:9px 12px; font-size:12px; margin-bottom:16px}
-  .callout .ic{color:var(--accent); margin-top:1px}
-  .callout b{font-weight:700}
-  .banner{display:none; gap:9px; align-items:flex-start; border-radius:var(--r-md); padding:10px 13px; font-size:12.5px;
-          margin-bottom:16px}
+  .callout{display:flex; gap:11px; align-items:flex-start; background:var(--accent-soft); border:1px solid var(--accent-line);
+           color:#39308f; border-radius:var(--r-md); padding:13px 16px; font-size:13px; margin-bottom:22px}
+  .callout .ic{color:var(--accent); margin-top:2px}
+  .callout b{font-weight:600}
+  .banner{display:none; gap:11px; align-items:flex-start; border-radius:var(--r-md); padding:13px 16px; font-size:13.5px;
+          margin-bottom:22px}
   .banner.show{display:flex}
-  .banner.err{background:var(--err-soft); border:1px solid var(--err-line); color:#a5281b}
-  .banner.err .ic{color:var(--err)}
-  .banner.ok{background:var(--ok-soft); border:1px solid var(--ok-line); color:#1c6b4c}
-  .banner.ok .ic{color:var(--ok)}
+  .banner.err{background:var(--err-soft); border:1px solid #f3c6c9; color:#9d2a34}
+  .banner.ok{background:var(--ok-soft); border:1px solid #b9e4d1; color:#0b6b4a}
 
-  .attest{display:flex; gap:9px; align-items:flex-start; font-size:12.5px; color:var(--body); cursor:pointer;
-          background:#f6f9fc; border:1px solid var(--line-soft); border-radius:var(--r-md); padding:10px 12px; margin-bottom:9px}
+  .attest{display:flex; gap:11px; align-items:flex-start; font-size:13px; color:var(--body); cursor:pointer;
+          background:var(--field); border:1px solid var(--line); border-radius:var(--r-md); padding:13px 15px; margin-bottom:12px}
   .attest.missing{border-color:var(--err); background:var(--err-soft)}
-  .attest input{margin:2px 0 0; accent-color:var(--accent); width:15px; height:15px; flex:0 0 auto}
+  .attest input{margin:2px 0 0; accent-color:var(--accent); width:16px; height:16px; flex:0 0 auto}
 
-  /* sticky action dock */
-  .dock{position:fixed; left:0; right:0; bottom:0; z-index:45; background:#fff; border-top:1px solid var(--line);
-        padding:9px 18px; box-shadow:0 -2px 8px rgba(40,70,90,.08)}
-  .dock .inner{max-width:1180px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap}
-  .dock .status{font-size:12px; color:var(--muted)}
-  .dock .status b{color:var(--ink); font-weight:700}
+  /* dock */
+  .dock{position:fixed; left:0; right:0; bottom:0; z-index:45; background:rgba(255,255,255,.95); backdrop-filter:blur(8px);
+        border-top:1px solid var(--line); padding:12px 26px}
+  .dock .inner{max-width:1240px; margin:0 auto; display:flex; align-items:center; gap:16px; flex-wrap:wrap}
+  .dock .status{font-size:12.5px; color:var(--muted)}
+  .dock .status b{color:var(--ink); font-weight:600}
   .dock .grow{flex:1}
 
-  .foot{max-width:1180px; margin:0 auto; padding:0 18px 22px; font-size:11px; color:var(--muted); text-align:center}
+  .foot{max-width:1240px; margin:0 auto; padding:0 26px 26px; font-size:11.5px; color:var(--faint); text-align:center}
 
-  .toast{position:fixed; left:50%; bottom:64px; transform:translateX(-50%) translateY(16px); z-index:60;
-         background:#26384a; color:#fff; font-size:12.5px; padding:10px 17px; border-radius:6px;
-         box-shadow:0 8px 30px rgba(0,0,0,.25); opacity:0; transition:opacity .2s, transform .2s; pointer-events:none}
-  .toast.show{opacity:1; transform:translateX(-50%) translateY(0)}
+  .toast{position:fixed; right:22px; bottom:88px; z-index:60; background:var(--ink); color:#fff; font-size:13px;
+         padding:12px 18px; border-radius:12px; box-shadow:0 12px 34px rgba(21,26,38,.28); opacity:0; transform:translateY(10px);
+         transition:.22s; pointer-events:none}
+  .toast.show{opacity:1; transform:translateY(0)}
 
   @media print{
     .top,.rail,.dock,.toast,.addrow{display:none !important}
     body{background:#fff}
     .shell{display:block; padding:0; max-width:none}
-    .card{box-shadow:none; page-break-inside:avoid}
+    .card{box-shadow:none; border-color:#ddd; page-break-inside:avoid}
   }
 </style>
 </head>
 <body>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="p-cross" viewBox="0 0 24 24"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" fill="currentColor"/></symbol>
+  <symbol id="p-star" viewBox="0 0 24 24"><path d="M12 2.6l2.5 5.4 5.9.7-4.4 4 1.2 5.8L12 15.6 6.8 18.5 8 12.7 3.6 8.7l5.9-.7z" fill="currentColor"/></symbol>
   <symbol id="p-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
   <symbol id="p-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M12 11v5.2M12 7.5v.4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></symbol>
   <symbol id="p-check" viewBox="0 0 24 24"><path d="M4.5 12.5l5 5 10-11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
@@ -214,9 +198,9 @@
 </svg>
 
 <header class="top">
-  <div class="brand"><span class="mark"><svg class="ic"><use href="#p-cross"/></svg></span>GenericCare</div>
+  <div class="brand"><span class="mark"><svg class="ic"><use href="#p-star"/></svg></span>Northstar <span>Charting</span></div>
   <div class="sep"></div>
-  <div class="crumb">Client Records &rsaquo; <b>New Patient Encounter</b></div>
+  <div class="crumb">Encounters &rsaquo; <b>New patient encounter</b></div>
   <div class="grow"></div>
   <div class="save-state"><span class="dot"></span>Unsaved draft</div>
   <a class="btn btn-ghost" href="index.html"><svg class="ic"><use href="#p-back"/></svg>Back to chart</a>
@@ -259,7 +243,6 @@
         <div class="badge">1</div>
         <div><h3>Patient</h3><p>Identity, contact details and coverage for the person being seen.</p></div>
       </header>
-      <div class="body">
       <div class="callout"><svg class="ic"><use href="#p-info"/></svg><span><b>New patient record.</b> Nothing here is pre-filled from another chart. Required fields are marked with an asterisk.</span></div>
       <div class="grid">
       <div class="f">
@@ -395,7 +378,6 @@
         <input class="in" id="form-emergency-phone" placeholder="(___) ___-____" />
       </div>
       </div>
-      </div>
     </section>
 
     <section class="card" id="s-encounter">
@@ -403,7 +385,6 @@
         <div class="badge">2</div>
         <div><h3>Encounter</h3><p>When the visit happened, where, and who saw the patient.</p></div>
       </header>
-      <div class="body">
       <div class="grid">
       <div class="f">
         <label for="form-dos">Date of service<em>*</em></label>
@@ -478,7 +459,6 @@
         <input class="in" id="form-reason" placeholder="As booked at scheduling" />
       </div>
       </div>
-      </div>
     </section>
 
     <section class="card" id="s-vitals">
@@ -486,7 +466,6 @@
         <div class="badge">3</div>
         <div><h3>Vitals</h3><p>Measurements taken at the start of the visit.</p></div>
       </header>
-      <div class="body">
       <div class="grid">
       <div class="f">
         <label for="form-bp-sys">BP &mdash; systolic</label>
@@ -570,7 +549,6 @@
         <input class="in" id="form-vitals-by" placeholder="Staff name and time" />
       </div>
       </div>
-      </div>
     </section>
 
     <section class="card" id="s-history">
@@ -578,7 +556,6 @@
         <div class="badge">4</div>
         <div><h3>History</h3><p>Presenting problem, allergies and the medications the patient takes now.</p></div>
       </header>
-      <div class="body">
       <div class="grid">
       <div class="f w2">
         <label for="form-cc">Chief complaint<em>*</em></label>
@@ -668,7 +645,6 @@
         </div>
       </div>
       <button type="button" class="addrow" onclick="toast('Add medication (demo)')"><svg class="ic" style="width:14px;height:14px"><use href="#p-plus"/></svg>Add medication</button>
-      </div>
     </section>
 
     <section class="card" id="s-ros">
@@ -676,7 +652,6 @@
         <div class="badge">5</div>
         <div><h3>Review of systems</h3><p>Tap any system with a positive finding, then add detail.</p></div>
       </header>
-      <div class="body">
       <div class="chips" style="margin-bottom:16px"><label class="chip"><input type="checkbox" id="form-ros-negative" /><span>All systems reviewed and negative except as noted</span></label><label class="chip"><input type="checkbox" /><span>Unable to obtain</span></label></div>
       <div class="sublabel">Positive findings</div>
       <div class="chips" id="form-ros">
@@ -701,7 +676,6 @@
         <textarea class="in" id="form-ros-notes" rows="3" placeholder="Detail any positive findings&hellip;"></textarea>
       </div>
       </div></div>
-      </div>
     </section>
 
     <section class="card" id="s-exam">
@@ -709,7 +683,6 @@
         <div class="badge">6</div>
         <div><h3>Exam &amp; assessment</h3><p>Objective findings and the diagnoses being addressed.</p></div>
       </header>
-      <div class="body">
       <div class="grid">
       <div class="f">
         <label for="form-exam-general">General appearance</label>
@@ -781,7 +754,6 @@
         <textarea class="in" id="form-assessment" rows="4" placeholder="Clinical impression and reasoning&hellip;"></textarea>
       </div>
       </div></div>
-      </div>
     </section>
 
     <section class="card" id="s-plan">
@@ -789,7 +761,6 @@
         <div class="badge">7</div>
         <div><h3>Plan</h3><p>What happens next: treatment, prescriptions, orders and follow-up.</p></div>
       </header>
-      <div class="body">
       <div class="grid">
       <div class="f w3">
         <label for="form-plan">Treatment plan</label>
@@ -887,7 +858,6 @@
         <textarea class="in" id="form-precautions" rows="2" placeholder="Symptoms that should prompt an earlier return or urgent care&hellip;"></textarea>
       </div>
       </div></div>
-      </div>
     </section>
 
     <section class="card" id="s-billing">
@@ -895,7 +865,6 @@
         <div class="badge">8</div>
         <div><h3>Billing &amp; signature</h3><p>Coding for the visit, then attest and sign.</p></div>
       </header>
-      <div class="body">
       <div class="grid">
       <div class="f">
         <label for="form-cpt">E&amp;M / CPT code<em>*</em></label>
@@ -979,7 +948,6 @@
       <div class="f">
         <label for="form-sign-date">Signature date &amp; time</label>
         <input class="in" id="form-sign-date" placeholder="MM/DD/YYYY hh:mm" />
-      </div>
       </div>
       </div>
     </section>
